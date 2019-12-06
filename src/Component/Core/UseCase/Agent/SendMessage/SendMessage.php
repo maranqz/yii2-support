@@ -1,13 +1,13 @@
 <?php
 
-namespace Support\Component\Referee\UseCase\Referee\SendMessage;
+namespace Support\Component\Core\UseCase\Agent\SendMessage;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Support\Component\Core\Entity\MessageInterface;
+use Support\Component\Core\Gateway\Notification\NotifierInterface;
 use Support\Component\Core\Gateway\Repository\Message\CreateMessageRepositoryInput;
 use Support\Component\Core\Gateway\Repository\Message\MessageRepositoryInterface;
-use Support\Component\Referee\Gateway\Notification\NotifierInterface;
-use Support\Component\Referee\Gateway\Repository\UserRepositoryInterface;
+use Support\Component\Core\Gateway\Repository\UserRepositoryInterface;
 
 class SendMessage implements SendMessageInterface
 {
@@ -34,14 +34,13 @@ class SendMessage implements SendMessageInterface
 
         $message = $this->messageRepository->createAndSave(new CreateMessageRepositoryInput(
             $inputDTO->getText(),
-            $inputDTO->getReferee(),
-            $inputDTO->getAttachments(),
-            false
+            $inputDTO->getAgent(),
+            $inputDTO->getAttachments()
         ));
 
-        $recipients = $this->userRepository->getRecipientsForTicketFromReferee($inputDTO->getTicket());
+        $recipients = $this->userRepository->getRecipientsForTicketFromAgent($inputDTO->getTicket());
 
-        $this->notifier->createMessageFromReferee($recipients, $inputDTO->getTicket(), $message);
+        $this->notifier->createMessageFromAgent($recipients, $inputDTO->getTicket(), $message);
 
         $this->eventDispatcher->dispatch(new AfterSendMessage($message));
 

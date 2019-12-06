@@ -21,9 +21,5 @@ interface MessageInterface extends IdentifyInterface, CreatedAtInterface
 
     public function getSender(): UserInterface;
 
-    public function setSender(UserInterface $sender, bool $isCustomer): self;
-
-    public function isCustomerSent(): bool;
-
-    public function isAgentSent(): bool;
+    public function setSender(UserInterface $sender): self;
 }

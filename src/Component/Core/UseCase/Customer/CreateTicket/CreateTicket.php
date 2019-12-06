@@ -51,8 +51,7 @@ class CreateTicket implements CreateTicketInterface
         $message = $this->messageRepository->createAndSave(new CreateMessageRepositoryInput(
             $ticketInput->getText(),
             $ticketInput->getCustomer(),
-            $ticketInput->getAttachments(),
-            true
+            $ticketInput->getAttachments()
         ));
 
         $ticket->addMessage($message);

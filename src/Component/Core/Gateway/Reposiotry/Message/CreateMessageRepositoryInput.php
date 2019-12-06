@@ -9,14 +9,12 @@ class CreateMessageRepositoryInput implements CreateMessageRepositoryInputInterf
     private $text;
     private $attachments;
     private $sender;
-    private $isCustomSent;
 
-    public function __construct(string $text, UserInterface $sender, iterable $attachments, bool $isCustomSent)
+    public function __construct(string $text, UserInterface $sender, iterable $attachments)
     {
         $this->text = $text;
         $this->sender = $sender;
         $this->attachments = $attachments;
-        $this->isCustomSent = $isCustomSent;
     }
 
     public function getText()
@@ -32,10 +30,5 @@ class CreateMessageRepositoryInput implements CreateMessageRepositoryInputInterf
     public function getSender()
     {
         return $this->sender;
-    }
-
-    public function isCustomerSent()
-    {
-        return $this->isCustomSent;
     }
 }

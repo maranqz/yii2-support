@@ -8,5 +8,6 @@ interface AttachmentInterface extends IdentifyInterface
 {
     public function getName(): string;
 
-    public function getSize(): float;
+    /** @return int */
+    public function getSize();
 }

@@ -19,5 +19,10 @@
   },
   "scripts": {
     "cs-fixer": "php-cs-fixer fix -v --config=./.php_cs.dist"
+  },
+  "autoload": {
+    "psr-4": {
+      "Support\\": "src/"
+    }
   }
 }

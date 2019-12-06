@@ -9,6 +9,4 @@ interface CreateMessageRepositoryInputInterface
     public function getAttachments();
 
     public function getSender();
-
-    public function isCustomerSent();
 }

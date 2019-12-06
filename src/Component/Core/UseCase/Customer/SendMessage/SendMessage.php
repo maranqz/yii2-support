@@ -1,6 +1,6 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Agent\SendMessage;
+namespace Support\Component\Core\UseCase\Customer\SendMessage;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Support\Component\Core\Entity\MessageInterface;
@@ -34,14 +34,13 @@ class SendMessage implements SendMessageInterface
 
         $message = $this->messageRepository->createAndSave(new CreateMessageRepositoryInput(
             $inputDTO->getText(),
-            $inputDTO->getAgent(),
-            $inputDTO->getAttachments(),
-            false
+            $inputDTO->getCustomer(),
+            $inputDTO->getAttachments()
         ));
 
-        $recipients = $this->userRepository->getRecipientsForTicketFromAgent($inputDTO->getTicket());
+        $recipients = $this->userRepository->getRecipientsForTicketFromCustomer($inputDTO->getTicket());
 
-        $this->notifier->createMessageFromAgent($recipients, $inputDTO->getTicket(), $message);
+        $this->notifier->createMessageFromCustomer($recipients, $inputDTO->getTicket(), $message);
 
         $this->eventDispatcher->dispatch(new AfterSendMessage($message));
 
