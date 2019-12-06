@@ -1,0 +1,9 @@
+{
+  "name": "maranqz/support-core-component",
+  "description": "Simple interface support component",
+  "require": {
+    "php": ">=7.2 <8",
+    "doctrine/collections": "1.*",
+    "psr/event-dispatcher": "^1.0"
+  }
+}

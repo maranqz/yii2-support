@@ -1,0 +1,7 @@
+{
+  "name": "maranqz/support-referee-component",
+  "description": "Referee interface support component",
+  "require": {
+    "maranqz/support-core-component": "0.*"
+  }
+}

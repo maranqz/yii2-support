@@ -1,0 +1,46 @@
+<?php
+
+namespace Support\Component\Core\UseCase\Agent\SendMessage;
+
+use Support\Component\Core\Entity\TicketInterface;
+use Support\Component\Core\Entity\UserInterface;
+
+class SendMessageInput implements SendMessageInputInterface
+{
+    protected $ticket;
+    protected $agent;
+    protected $text;
+    protected $attachments;
+
+    public function __construct(
+        TicketInterface $ticket,
+        UserInterface $agent,
+        string $text,
+        iterable $attachments = null
+    ) {
+        $this->ticket = $ticket;
+        $this->agent = $agent;
+        $this->text = $text;
+        $this->attachments = $attachments;
+    }
+
+    public function getTicket(): TicketInterface
+    {
+        return $this->ticket;
+    }
+
+    public function getAgent(): UserInterface
+    {
+        return $this->agent;
+    }
+
+    public function getText(): string
+    {
+        return $this->text;
+    }
+
+    public function getAttachments(): iterable
+    {
+        return $this->attachments;
+    }
+}
