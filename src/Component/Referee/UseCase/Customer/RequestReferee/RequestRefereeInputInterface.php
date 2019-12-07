@@ -1,9 +1,9 @@
 <?php
 
-namespace Support\Component\Referee\UseCase\Customer\RequestReferee;
+namespace SSupport\Component\Referee\UseCase\Customer\RequestReferee;
 
-use Support\Component\Referee\Entity\RefereeInterface;
-use Support\Component\Referee\Entity\RefereeTicketInterface;
+use SSupport\Component\Referee\Entity\RefereeInterface;
+use SSupport\Component\Referee\Entity\RefereeTicketInterface;
 
 interface RequestRefereeInputInterface
 {

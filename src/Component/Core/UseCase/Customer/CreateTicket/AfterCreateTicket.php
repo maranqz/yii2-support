@@ -1,9 +1,9 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Customer\CreateTicket;
+namespace SSupport\Component\Core\UseCase\Customer\CreateTicket;
 
-use Support\Component\Core\Entity\TicketInterface;
-use Support\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\Gateway\Event;
 
 class AfterCreateTicket extends Event implements AfterCreateTicketInterface
 {

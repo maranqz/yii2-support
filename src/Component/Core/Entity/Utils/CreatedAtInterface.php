@@ -1,8 +1,10 @@
 <?php
 
-namespace Support\Component\Core\Entity\Utils;
+namespace SSupport\Component\Core\Entity\Utils;
+
+use DateTimeInterface;
 
 interface CreatedAtInterface
 {
-    public function getCreatedAt(): ?\DateTimeInterface;
+    public function getCreatedAt(): ?DateTimeInterface;
 }

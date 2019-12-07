@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Core\Gateway\Repository\Message;
+namespace SSupport\Component\Core\Gateway\Repository\Message;
 
-use Support\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Entity\UserInterface;
 
 class CreateMessageRepositoryInput implements CreateMessageRepositoryInputInterface
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Core\Entity;
+namespace SSupport\Component\Core\Entity;
 
-use Support\Component\Core\Entity\Utils\IdentifyInterface;
+use SSupport\Component\Core\Entity\Utils\IdentifyInterface;
 
 interface UserInterface extends IdentifyInterface
 {

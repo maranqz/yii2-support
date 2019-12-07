@@ -1,10 +1,10 @@
 <?php
 
-namespace Support\Component\Referee\UseCase\Customer\RequestReferee;
+namespace SSupport\Component\Referee\UseCase\Customer\RequestReferee;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Support\Component\Referee\Gateway\Notification\NotifierInterface;
-use Support\Component\Referee\Gateway\Repository\UserRepositoryInterface;
+use SSupport\Component\Referee\Gateway\Notification\NotifierInterface;
+use SSupport\Component\Referee\Gateway\Repository\UserRepositoryInterface;
 
 class RequestReferee implements RequestRefereeInterface
 {

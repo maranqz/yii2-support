@@ -1,10 +1,12 @@
 <?php
 
-namespace Support\Component\Core\Entity\Utils;
+namespace SSupport\Component\Core\Entity\Utils;
+
+use DateTimeInterface;
 
 interface UpdatedAtInterface
 {
-    public function getUpdatedAt(): ?\DateTimeInterface;
+    public function getUpdatedAt(): ?DateTimeInterface;
 
-    public function setUpdatedAt(\DateTimeInterface $dateTime): self;
+    public function setUpdatedAt(DateTimeInterface $dateTime): UpdatedAtInterface;
 }

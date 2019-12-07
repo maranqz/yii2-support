@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Referee\Entity;
+namespace SSupport\Component\Referee\Entity;
 
-use Support\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Entity\UserInterface;
 
 interface RefereeInterface extends UserInterface
 {

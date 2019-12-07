@@ -1,9 +1,9 @@
 <?php
 
-namespace Support\Component\Core\Gateway\Repository\Message;
+namespace SSupport\Component\Core\Gateway\Repository\Message;
 
-use Support\Component\Core\Entity\MessageInterface;
-use Support\Component\Core\Gateway\Repository\RepositoryInterface;
+use SSupport\Component\Core\Entity\MessageInterface;
+use SSupport\Component\Core\Gateway\Repository\RepositoryInterface;
 
 interface MessageRepositoryInterface extends RepositoryInterface
 {

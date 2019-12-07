@@ -1,6 +1,6 @@
 <?php
 
-namespace Support\Component\Referee\UseCase\Referee\SendMessage;
+namespace SSupport\Component\Referee\UseCase\Referee\SendMessage;
 
 interface BeforeSendMessageInterface
 {

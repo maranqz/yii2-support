@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Core\Entity\Utils;
+namespace SSupport\Component\Core\Entity\Utils;
 
-use Support\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Entity\UserInterface;
 
 interface CustomerAwareInterface
 {

@@ -1,15 +1,15 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Customer\CreateTicket;
+namespace SSupport\Component\Core\UseCase\Customer\CreateTicket;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Support\Component\Core\Entity\TicketInterface;
-use Support\Component\Core\Factory\FactoryInterface;
-use Support\Component\Core\Gateway\Notification\NotifierInterface;
-use Support\Component\Core\Gateway\Repository\Message\CreateMessageRepositoryInput;
-use Support\Component\Core\Gateway\Repository\Message\MessageRepositoryInterface;
-use Support\Component\Core\Gateway\Repository\TicketRepositoryInterface;
-use Support\Component\Core\Gateway\Repository\UserRepositoryInterface;
+use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\Factory\FactoryInterface;
+use SSupport\Component\Core\Gateway\Notification\NotifierInterface;
+use SSupport\Component\Core\Gateway\Repository\Message\CreateMessageRepositoryInput;
+use SSupport\Component\Core\Gateway\Repository\Message\MessageRepositoryInterface;
+use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
+use SSupport\Component\Core\Gateway\Repository\UserRepositoryInterface;
 
 class CreateTicket implements CreateTicketInterface
 {
@@ -63,9 +63,7 @@ class CreateTicket implements CreateTicketInterface
         return $ticket;
     }
 
-    /**
-     * @return TicketInterface
-     */
+    /** @return TicketInterface */
     protected function getTicket()
     {
         return $this->ticketFactory->createNew();

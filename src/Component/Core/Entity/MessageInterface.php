@@ -1,10 +1,10 @@
 <?php
 
-namespace Support\Component\Core\Entity;
+namespace SSupport\Component\Core\Entity;
 
 use Doctrine\Common\Collections\Collection;
-use Support\Component\Core\Entity\Utils\CreatedAtInterface;
-use Support\Component\Core\Entity\Utils\IdentifyInterface;
+use SSupport\Component\Core\Entity\Utils\CreatedAtInterface;
+use SSupport\Component\Core\Entity\Utils\IdentifyInterface;
 
 interface MessageInterface extends IdentifyInterface, CreatedAtInterface
 {
@@ -20,6 +20,4 @@ interface MessageInterface extends IdentifyInterface, CreatedAtInterface
     public function addAttachment(AttachmentInterface $attachment): self;
 
     public function getSender(): UserInterface;
-
-    public function setSender(UserInterface $sender): self;
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Support\Component\Core\Gateway;
+namespace SSupport\Component\Core\Gateway;
 
 use Psr\EventDispatcher\StoppableEventInterface;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Support\Component\Core\Factory;
+namespace SSupport\Component\Core\Factory;
 
 interface FactoryInterface
 {

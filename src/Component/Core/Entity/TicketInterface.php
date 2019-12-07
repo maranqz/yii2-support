@@ -1,11 +1,11 @@
 <?php
 
-namespace Support\Component\Core\Entity;
+namespace SSupport\Component\Core\Entity;
 
 use Doctrine\Common\Collections\Collection;
-use Support\Component\Core\Entity\Utils\CustomerAwareInterface;
-use Support\Component\Core\Entity\Utils\IdentifyInterface;
-use Support\Component\Core\Entity\Utils\TimestampInterface;
+use SSupport\Component\Core\Entity\Utils\CustomerAwareInterface;
+use SSupport\Component\Core\Entity\Utils\IdentifyInterface;
+use SSupport\Component\Core\Entity\Utils\TimestampInterface;
 
 interface TicketInterface extends IdentifyInterface, CustomerAwareInterface, TimestampInterface
 {

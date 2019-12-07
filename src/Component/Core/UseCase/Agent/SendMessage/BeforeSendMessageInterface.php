@@ -1,6 +1,6 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Agent\SendMessage;
+namespace SSupport\Component\Core\UseCase\Agent\SendMessage;
 
 interface BeforeSendMessageInterface
 {

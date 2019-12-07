@@ -1,6 +1,6 @@
 <?php
 
-namespace Support\Module\Core;
+namespace SSupport\Module\Core;
 
 use yii\base\Module as BaseModule;
 

@@ -1,9 +1,9 @@
 <?php
 
-namespace Support\Component\Referee\Entity;
+namespace SSupport\Component\Referee\Entity;
 
 use Doctrine\Common\Collections\Collection;
-use Support\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\Entity\TicketInterface;
 
 interface RefereeTicketInterface extends TicketInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Customer\SendMessage;
+namespace SSupport\Component\Core\UseCase\Customer\SendMessage;
 
-use Support\Component\Core\Entity\MessageInterface;
-use Support\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Entity\MessageInterface;
+use SSupport\Component\Core\Gateway\Event;
 
 class AfterSendMessage extends Event implements AfterSendMessageInterface
 {

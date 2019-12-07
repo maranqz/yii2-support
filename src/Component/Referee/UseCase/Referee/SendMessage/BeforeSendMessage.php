@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Referee\UseCase\Referee\SendMessage;
+namespace SSupport\Component\Referee\UseCase\Referee\SendMessage;
 
-use Support\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event;
 
 class BeforeSendMessage extends Event implements BeforeSendMessageInterface
 {

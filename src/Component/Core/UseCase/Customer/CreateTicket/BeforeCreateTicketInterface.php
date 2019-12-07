@@ -1,6 +1,6 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Customer\CreateTicket;
+namespace SSupport\Component\Core\UseCase\Customer\CreateTicket;
 
 interface BeforeCreateTicketInterface
 {

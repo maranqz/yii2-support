@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Customer\CreateTicket;
+namespace SSupport\Component\Core\UseCase\Customer\CreateTicket;
 
-use Support\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event;
 
 class BeforeCreateTicket extends Event implements BeforeCreateTicketInterface
 {

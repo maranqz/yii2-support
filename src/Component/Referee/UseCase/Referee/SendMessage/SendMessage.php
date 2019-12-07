@@ -1,13 +1,13 @@
 <?php
 
-namespace Support\Component\Referee\UseCase\Referee\SendMessage;
+namespace SSupport\Component\Referee\UseCase\Referee\SendMessage;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use Support\Component\Core\Entity\MessageInterface;
-use Support\Component\Core\Gateway\Repository\Message\CreateMessageRepositoryInput;
-use Support\Component\Core\Gateway\Repository\Message\MessageRepositoryInterface;
-use Support\Component\Referee\Gateway\Notification\NotifierInterface;
-use Support\Component\Referee\Gateway\Repository\UserRepositoryInterface;
+use SSupport\Component\Core\Entity\MessageInterface;
+use SSupport\Component\Core\Gateway\Repository\Message\CreateMessageRepositoryInput;
+use SSupport\Component\Core\Gateway\Repository\Message\MessageRepositoryInterface;
+use SSupport\Component\Referee\Gateway\Notification\NotifierInterface;
+use SSupport\Component\Referee\Gateway\Repository\UserRepositoryInterface;
 
 class SendMessage implements SendMessageInterface
 {

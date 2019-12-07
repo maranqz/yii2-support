@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Customer\CreateTicket;
+namespace SSupport\Component\Core\UseCase\Customer\CreateTicket;
 
-use Support\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Entity\UserInterface;
 
 class CreateTicketInput implements CreateTicketInputInterface
 {

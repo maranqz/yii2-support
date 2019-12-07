@@ -1,10 +1,10 @@
 <?php
 
-namespace Support\Component\Referee\UseCase\Referee\SendMessage;
+namespace SSupport\Component\Referee\UseCase\Referee\SendMessage;
 
-use Support\Component\Core\Entity\AttachmentInterface;
-use Support\Component\Referee\Entity\RefereeInterface;
-use Support\Component\Referee\Entity\RefereeTicketInterface;
+use SSupport\Component\Core\Entity\AttachmentInterface;
+use SSupport\Component\Referee\Entity\RefereeInterface;
+use SSupport\Component\Referee\Entity\RefereeTicketInterface;
 
 interface SendMessageInputInterface
 {

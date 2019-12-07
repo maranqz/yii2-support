@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Agent\SendMessage;
+namespace SSupport\Component\Core\UseCase\Agent\SendMessage;
 
-use Support\Component\Core\Entity\MessageInterface;
+use SSupport\Component\Core\Entity\MessageInterface;
 
 interface SendMessageInterface
 {

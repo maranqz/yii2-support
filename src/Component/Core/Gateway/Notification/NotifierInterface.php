@@ -1,9 +1,9 @@
 <?php
 
-namespace Support\Component\Core\Gateway\Notification;
+namespace SSupport\Component\Core\Gateway\Notification;
 
-use Support\Component\Core\Entity\MessageInterface;
-use Support\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\Entity\MessageInterface;
+use SSupport\Component\Core\Entity\TicketInterface;
 
 interface NotifierInterface
 {

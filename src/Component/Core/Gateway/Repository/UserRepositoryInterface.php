@@ -1,9 +1,9 @@
 <?php
 
-namespace Support\Component\Core\Gateway\Repository;
+namespace SSupport\Component\Core\Gateway\Repository;
 
-use Support\Component\Core\Entity\TicketInterface;
-use Support\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\Entity\UserInterface;
 
 interface UserRepositoryInterface extends RepositoryInterface
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Agent\SendMessage;
+namespace SSupport\Component\Core\UseCase\Agent\SendMessage;
 
-use Support\Component\Core\Entity\TicketInterface;
-use Support\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\Entity\UserInterface;
 
 class SendMessageInput implements SendMessageInputInterface
 {

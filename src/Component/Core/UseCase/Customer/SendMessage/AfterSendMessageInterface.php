@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Customer\SendMessage;
+namespace SSupport\Component\Core\UseCase\Customer\SendMessage;
 
-use Support\Component\Core\Entity\MessageInterface;
+use SSupport\Component\Core\Entity\MessageInterface;
 
 interface AfterSendMessageInterface
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Support\Component\Core\UseCase\Customer\SendMessage;
+namespace SSupport\Component\Core\UseCase\Customer\SendMessage;
 
-use Support\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event;
 
 class BeforeSendMessage extends Event implements BeforeSendMessageInterface
 {

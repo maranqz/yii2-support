@@ -1,10 +1,10 @@
 <?php
 
-namespace Support\Component\Referee\Gateway\Repository;
+namespace SSupport\Component\Referee\Gateway\Repository;
 
-use Support\Component\Core\Entity\UserInterface;
-use Support\Component\Core\Gateway\Repository\UserRepositoryInterface as BaseUserRepositoryInterface;
-use Support\Component\Referee\Entity\RefereeTicketInterface;
+use SSupport\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Gateway\Repository\UserRepositoryInterface as BaseUserRepositoryInterface;
+use SSupport\Component\Referee\Entity\RefereeTicketInterface;
 
 interface UserRepositoryInterface extends BaseUserRepositoryInterface
 {
