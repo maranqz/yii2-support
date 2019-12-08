@@ -7,17 +7,14 @@ use SSupport\Component\Core\Entity\UserInterface;
 
 interface CreateTicketInputInterface
 {
-    /**
-     * @return UserInterface
-     */
-    public function getCustomer();
+    public function getCustomer(): UserInterface;
 
-    public function getSubject();
+    public function getSubject(): string;
 
-    public function getText();
+    public function getText(): string;
 
     /**
      * @return AttachmentInterface[]
      */
-    public function getAttachments();
+    public function getAttachments(): iterable;
 }

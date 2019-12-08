@@ -2,9 +2,9 @@
 
 namespace SSupport\Module\Core\Entity\Utils;
 
-use SSupport\Component\Core\Entity\Utils\UpdatedAtInterface;
 use DateTimeImmutable;
 use DateTimeInterface;
+use SSupport\Component\Core\Entity\Utils\UpdatedAtInterface;
 
 trait UpdatedAtTrait
 {

@@ -10,13 +10,15 @@ use SSupport\Module\Core\Entity\Utils\IdentifyTrait;
 use SSupport\Module\Core\Entity\Utils\TimestampTrait;
 use SSupport\Module\Core\Exception\NotImplementedException;
 use SSupport\Module\Core\Gateway\Repository\TicketRepository;
+use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecordInterface;
 use yii\db\ActiveRecord;
+use yii\db\ActiveRecordInterface;
 
 class Ticket extends ActiveRecord implements TicketInterface
 {
+    use ContainerAwareTrait;
     use IdentifyTrait;
     use TimestampTrait;
 
@@ -44,14 +46,14 @@ class Ticket extends ActiveRecord implements TicketInterface
                 ['assign_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => User::className(),
+                'targetClass' => $this->getClass(UserInterface::class),
                 'targetAttribute' => ['assign_id' => 'id'],
             ],
             [
                 ['customer_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => User::className(),
+                'targetClass' => $this->getClass(UserInterface::class),
                 'targetAttribute' => ['customer_id' => 'id'],
             ],
         ];
@@ -60,12 +62,12 @@ class Ticket extends ActiveRecord implements TicketInterface
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('yii2-support', 'ID'),
-            'subject' => Yii::t('yii2-support', 'Subject'),
-            'customer_id' => Yii::t('yii2-support', 'Customer ID'),
-            'assign_id' => Yii::t('yii2-support', 'Assign ID'),
-            'created_at' => Yii::t('yii2-support', 'Created At'),
-            'updated_at' => Yii::t('yii2-support', 'Updated At'),
+            'id' => Yii::t('ssupport', 'ID'),
+            'subject' => Yii::t('ssupport', 'Subject'),
+            'customer_id' => Yii::t('ssupport', 'Customer ID'),
+            'assign_id' => Yii::t('ssupport', 'Assign ID'),
+            'created_at' => Yii::t('ssupport', 'Created At'),
+            'updated_at' => Yii::t('ssupport', 'Updated At'),
         ];
     }
 
@@ -88,7 +90,7 @@ class Ticket extends ActiveRecord implements TicketInterface
 
     protected function getMessagesQuery()
     {
-        return $this->hasMany(Message::className(), ['ticket_id' => 'id']);
+        return $this->hasMany($this->getClass(MessageInterface::class), ['ticket_id' => 'id']);
     }
 
     /** @param MessageInterface|Message $message */
@@ -106,7 +108,7 @@ class Ticket extends ActiveRecord implements TicketInterface
 
     protected function getAssignQuery()
     {
-        return $this->hasOne(User::className(), ['id' => 'assign_id']);
+        return $this->hasOne($this->getClass(UserInterface::class), ['id' => 'assign_id']);
     }
 
     /** @param UserInterface|ActiveRecordInterface $user */
@@ -137,7 +139,7 @@ class Ticket extends ActiveRecord implements TicketInterface
 
     protected function getCustomerQuery()
     {
-        return $this->hasOne(User::className(), ['id' => 'customer_id']);
+        return $this->hasOne($this->getClass(UserInterface::class), ['id' => 'customer_id']);
     }
 
     public static function find()

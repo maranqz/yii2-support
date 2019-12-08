@@ -2,8 +2,8 @@
 
 namespace SSupport\Module\Core\Entity\Utils;
 
-use DateTimeInterface;
 use DateTimeImmutable;
+use DateTimeInterface;
 
 trait CreatedAtTrait
 {

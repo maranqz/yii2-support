@@ -25,5 +25,8 @@
     "psr-4": {
       "SSupport\\": "src/"
     }
+  },
+  "extra": {
+    "bootstrap": "SSupport\\Module\\Core\\Bootstrap"
   }
 }

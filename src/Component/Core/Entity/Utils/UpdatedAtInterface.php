@@ -8,5 +8,5 @@ interface UpdatedAtInterface
 {
     public function getUpdatedAt(): ?DateTimeInterface;
 
-    public function setUpdatedAt(DateTimeInterface $dateTime): UpdatedAtInterface;
+    public function setUpdatedAt(DateTimeInterface $dateTime): self;
 }

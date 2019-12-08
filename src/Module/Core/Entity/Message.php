@@ -9,13 +9,15 @@ use SSupport\Component\Core\Entity\UserInterface;
 use SSupport\Module\Core\Entity\Utils\CreatedAtTrait;
 use SSupport\Module\Core\Entity\Utils\IdentifyTrait;
 use SSupport\Module\Core\Gateway\Repository\MessageRepository;
+use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
-use yii\db\ActiveRecordInterface;
 use yii\db\ActiveRecord;
+use yii\db\ActiveRecordInterface;
 
 class Message extends ActiveRecord implements MessageInterface
 {
+    use ContainerAwareTrait;
     use IdentifyTrait;
     use CreatedAtTrait;
 
@@ -44,14 +46,14 @@ class Message extends ActiveRecord implements MessageInterface
                 ['sender_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => User::className(),
+                'targetClass' => $this->getClass(UserInterface::class),
                 'targetAttribute' => ['sender_id' => 'id'],
             ],
             [
                 ['ticket_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => Ticket::className(),
+                'targetClass' => $this->getClass(TicketInterface::class),
                 'targetAttribute' => ['ticket_id' => 'id'],
             ],
         ];
@@ -87,7 +89,7 @@ class Message extends ActiveRecord implements MessageInterface
 
     protected function getAttachmentsQuery()
     {
-        return $this->hasMany(Attachment::className(), ['message_id' => 'id']);
+        return $this->hasMany($this->getClass(AttachmentInterface::class), ['message_id' => 'id']);
     }
 
     /** @param AttachmentInterface|ActiveRecordInterface $attachment */
@@ -105,7 +107,7 @@ class Message extends ActiveRecord implements MessageInterface
 
     protected function getSenderQuery()
     {
-        return $this->hasOne(User::className(), ['id' => 'sender_id']);
+        return $this->hasOne($this->getClass(UserInterface::class), ['id' => 'sender_id']);
     }
 
     public function getTicket(): TicketInterface
@@ -115,7 +117,7 @@ class Message extends ActiveRecord implements MessageInterface
 
     protected function getTicketQuery()
     {
-        return $this->hasOne(Ticket::className(), ['id' => 'ticket_id']);
+        return $this->hasOne($this->getClass(TicketInterface::class), ['id' => 'ticket_id']);
     }
 
     public static function find()

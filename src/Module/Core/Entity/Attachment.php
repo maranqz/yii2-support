@@ -3,13 +3,16 @@
 namespace SSupport\Module\Core\Entity;
 
 use SSupport\Component\Core\Entity\AttachmentInterface;
+use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Module\Core\Entity\Utils\IdentifyTrait;
 use SSupport\Module\Core\Gateway\Repository\AttachmentRepository;
+use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use Yii;
 use yii\db\ActiveRecord;
 
 class Attachment extends ActiveRecord implements AttachmentInterface
 {
+    use ContainerAwareTrait;
     use IdentifyTrait;
 
     public static function tableName()
@@ -27,7 +30,7 @@ class Attachment extends ActiveRecord implements AttachmentInterface
                 ['message_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => Message::className(),
+                'targetClass' => $this->getClass(MessageInterface::class),
                 'targetAttribute' => ['message_id' => 'id'],
             ],
         ];
@@ -60,7 +63,7 @@ class Attachment extends ActiveRecord implements AttachmentInterface
 
     protected function getMessageQuery()
     {
-        return $this->hasOne(Message::className(), ['id' => 'message_id']);
+        return $this->hasOne($this->getClass(MessageInterface::class), ['id' => 'message_id']);
     }
 
     public static function find()
