@@ -9,7 +9,8 @@
     "doctrine/collections": "1.*",
     "psr/event-dispatcher": "^1.0",
     "yiisoft/yii2-dev": "2.*",
-    "league/flysystem": "^1.0"
+    "league/flysystem": "^1.0",
+    "la-haute-societe/yii2-save-relations-behavior": "^1.7"
   },
   "replace": {
     "maranqz/support-core-component": "self.version",

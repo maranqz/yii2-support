@@ -7,9 +7,9 @@ use SSupport\Component\Core\Entity\TicketInterface;
 
 interface NotifierInterface
 {
-    public function createTicket(iterable $recipients, TicketInterface $ticket, MessageInterface $message);
+    public function sendTicket(iterable $recipients, TicketInterface $ticket, MessageInterface $message);
 
-    public function createMessageFromAgent(iterable $recipients, TicketInterface $ticket, MessageInterface $message);
+    public function sendMessageFromAgent(iterable $recipients, TicketInterface $ticket, MessageInterface $message);
 
-    public function createMessageFromCustomer(iterable $recipients, TicketInterface $ticket, MessageInterface $message);
+    public function sendMessageFromCustomer(iterable $recipients, TicketInterface $ticket, MessageInterface $message);
 }

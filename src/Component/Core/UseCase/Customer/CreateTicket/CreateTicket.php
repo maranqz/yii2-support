@@ -5,17 +5,17 @@ namespace SSupport\Component\Core\UseCase\Customer\CreateTicket;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Factory\FactoryInterface;
+use SSupport\Component\Core\Factory\Message\CreateMessageInput;
+use SSupport\Component\Core\Factory\Message\MessageFactoryInterface;
 use SSupport\Component\Core\Gateway\Notification\NotifierInterface;
-use SSupport\Component\Core\Gateway\Repository\Message\CreateMessageRepositoryInput;
-use SSupport\Component\Core\Gateway\Repository\Message\MessageRepositoryInterface;
 use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
-use SSupport\Component\Core\Gateway\Repository\UserRepositoryInterface;
+use SSupport\Component\Core\Gateway\Repository\User\UserRepositoryInterface;
 
 class CreateTicket implements CreateTicketInterface
 {
     protected $ticketRepository;
     protected $userRepository;
-    protected $messageRepository;
+    protected $messageFactory;
     protected $notifier;
     protected $ticketFactory;
     protected $eventDispatcher;
@@ -23,14 +23,14 @@ class CreateTicket implements CreateTicketInterface
     public function __construct(
         TicketRepositoryInterface $ticketRepository,
         UserRepositoryInterface $userRepository,
-        MessageRepositoryInterface $messageRepository,
+        MessageFactoryInterface $messageFactory,
         NotifierInterface $notifier,
         FactoryInterface $ticketFactory,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->ticketRepository = $ticketRepository;
         $this->userRepository = $userRepository;
-        $this->messageRepository = $messageRepository;
+        $this->messageFactory = $messageFactory;
         $this->notifier = $notifier;
         $this->ticketFactory = $ticketFactory;
         $this->eventDispatcher = $eventDispatcher;
@@ -44,19 +44,21 @@ class CreateTicket implements CreateTicketInterface
         $ticket->setSubject($ticketInput->getSubject())
             ->setCustomer($ticketInput->getCustomer());
 
-        $this->ticketRepository->save($ticket);
+        foreach ($this->userRepository->getAssignAgentsNewTicket($ticket) as $agent) {
+            $ticket->assign($agent);
+        }
 
-        $agents = $this->userRepository->getAgentsForUnsignedTicket($ticket);
-
-        $message = $this->messageRepository->createAndSave(new CreateMessageRepositoryInput(
+        $message = $this->messageFactory->create(new CreateMessageInput(
             $ticketInput->getText(),
             $ticketInput->getCustomer(),
             $ticketInput->getAttachments()
         ));
-
         $ticket->addMessage($message);
 
-        $this->notifier->createTicket($agents, $ticket, $message);
+        $this->ticketRepository->save($ticket);
+
+        $noticeAgents = $this->userRepository->getNoticeAgentsNewTicket($ticket);
+        $this->notifier->sendTicket($noticeAgents, $ticket, $message);
 
         $this->eventDispatcher->dispatch(new AfterCreateTicket($ticket));
 

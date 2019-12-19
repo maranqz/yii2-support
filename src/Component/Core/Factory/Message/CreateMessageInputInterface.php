@@ -1,8 +1,8 @@
 <?php
 
-namespace SSupport\Component\Core\Gateway\Repository\Message;
+namespace SSupport\Component\Core\Factory\Message;
 
-interface CreateMessageRepositoryInputInterface
+interface CreateMessageInputInterface
 {
     public function getText();
 

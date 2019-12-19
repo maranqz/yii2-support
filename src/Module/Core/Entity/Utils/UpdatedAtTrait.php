@@ -10,7 +10,7 @@ trait UpdatedAtTrait
 {
     public function getUpdatedAt(): ?DateTimeInterface
     {
-        return DateTimeImmutable::createFromFormat('U', $this->__get('updated_at'));
+        return DateTimeImmutable::createFromFormat('U', $this->__get('updated_at') ?? time());
     }
 
     public function setUpdatedAt(DateTimeInterface $dateTime): UpdatedAtInterface

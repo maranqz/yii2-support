@@ -6,13 +6,30 @@ use Exception;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use SSupport\Component\Core\Entity\AttachmentInterface;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Factory\FactoryInterface;
+use SSupport\Component\Core\Factory\Message\MessageFactoryInterface;
+use SSupport\Component\Core\Gateway\Notification\NotifierInterface;
+use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
+use SSupport\Component\Core\Gateway\Repository\User\GetTicketDefaultAgentsInterface;
+use SSupport\Component\Core\Gateway\Repository\User\UserRepositoryInterface;
+use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicket;
+use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessage;
+use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
+use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
 use SSupport\Module\Core\Entity\Attachment;
 use SSupport\Module\Core\Entity\Message;
 use SSupport\Module\Core\Entity\Ticket;
+use SSupport\Module\Core\Factory\Factory;
+use SSupport\Module\Core\Factory\Message\MessageFactory;
+use SSupport\Module\Core\Gateway\Notification\Notifier;
+use SSupport\Module\Core\Gateway\Repository\TicketRepository;
+use SSupport\Module\Core\Gateway\Repository\User\UserRepository;
+use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use Yii;
 use yii\base\Application;
@@ -26,9 +43,10 @@ class Bootstrap implements BootstrapInterface
 {
     use ContainerAwareTrait;
 
+    /** {@inheritdoc} */
     public function bootstrap($app)
     {
-        $this->initContainer($app, $app->getModule(Module::$name)->classMap);
+        $this->initContainer();
         $this->initTranslations($app);
 
         if ($app instanceof WebApplication) {
@@ -36,15 +54,25 @@ class Bootstrap implements BootstrapInterface
         }
     }
 
-    protected function initContainer(Application $app, $map)
+    protected function initContainer()
     {
         try {
-            $this->initMap($map);
+            $this->checkRequiredClass();
             $this->initDefaultFilesystem();
             $this->initEntity();
+            $this->initFactory();
+            $this->initGateway();
+            $this->initUseCase();
+            $this->initForm();
         } catch (Exception $e) {
             die($e);
         }
+    }
+
+    protected function checkRequiredClass()
+    {
+        $this->checkDIClass(UserInterface::class);
+        $this->checkDIClass(EventDispatcherInterface::class);
     }
 
     protected function initEntity()
@@ -56,21 +84,55 @@ class Bootstrap implements BootstrapInterface
         $di->set(AttachmentInterface::class, Attachment::class);
     }
 
-    protected function initMap($map)
+    protected function initFactory()
     {
         $di = $this->getDi();
 
-        $this->checkInitMapClass($map, UserInterface::class);
-        foreach ($map as $class => $definition) {
-            $di->set($class, $definition);
-        }
+        $di->set(FactoryInterface::class.'.Ticket', Factory::class, [
+            $this->getDIClass(TicketInterface::class),
+        ]);
+
+        $di->set(MessageFactoryInterface::class, MessageFactory::class);
     }
 
-    protected function checkInitMapClass($map, $interface)
+    protected function initGateway()
     {
-        if (empty($map[$interface])) {
-            throw new \InvalidArgumentException('Map for "'.$interface.'" should be set.');
-        }
+        $this->initRepository();
+
+        $di = $this->getDi();
+        $di->set(NotifierInterface::class, Notifier::class);
+    }
+
+    protected function initRepository()
+    {
+        $di = $this->getDi();
+
+        $this->checkDIClass(GetTicketDefaultAgentsInterface::class);
+
+        $di->set(UserRepositoryInterface::class, UserRepository::class, [
+            $this->getDIClass(UserInterface::class),
+        ]);
+
+        $di->set(TicketRepositoryInterface::class, TicketRepository::class);
+        //$di->set(AttachmentRepositoryInterface::class, AttachmentRepository::class);
+    }
+
+    protected function initUseCase()
+    {
+        $di = $this->getDi();
+
+        $di->set(CreateTicket::class, CreateTicket::class, [
+            4 => $di->get(FactoryInterface::class.'.Ticket'),
+        ]);
+
+        $di->set(SendMessageInterface::class, SendMessage::class);
+    }
+
+    protected function initForm()
+    {
+        $di = $this->getDi();
+
+        $di->set(SendMessageInputInterface::class, SendMessageInputForm::class);
     }
 
     protected function initTranslations(Application $app)

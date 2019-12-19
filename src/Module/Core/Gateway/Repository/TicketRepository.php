@@ -2,37 +2,26 @@
 
 namespace SSupport\Module\Core\Gateway\Repository;
 
-use yii\db\ActiveQuery;
+use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
+use SSupport\Module\Core\Utils\RepositoryTrait;
 
-/**
- * This is the ActiveQuery class for [[\SSupport\Module\Core\Entity\Ticket]].
- *
- * @see \SSupport\Module\Core\Entity\Ticket
- */
-class TicketRepository extends ActiveQuery
+class TicketRepository implements TicketRepositoryInterface
 {
-    /*public function active()
-    {
-        return $this->andWhere('[[status]]=1');
-    }*/
+    use RepositoryTrait;
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return \SSupport\Module\Core\Entity\Ticket[]|array
-     */
-    public function all($db = null)
+    public function add(TicketInterface $ticket): TicketRepositoryInterface
     {
-        return parent::all($db);
+        return $this->trySave($ticket);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * @return \SSupport\Module\Core\Entity\Ticket|array|null
-     */
-    public function one($db = null)
+    public function save(TicketInterface $ticket): TicketRepositoryInterface
     {
-        return parent::one($db);
+        return $this->trySave($ticket);
+    }
+
+    public function remove(TicketInterface $ticket): TicketRepositoryInterface
+    {
+        return $this->tryDelete($ticket);
     }
 }

@@ -1,42 +1,50 @@
 <?php
 
-namespace SSupport\Module\Core\UseCase\Customer;
+namespace SSupport\Module\Core\UseCase\Form;
 
 use SSupport\Component\Core\Entity\AttachmentInterface;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Entity\UserInterface;
-use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInputInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use SSupport\Module\Core\Utils\ModelGetRulesTrait;
 use yii\base\Model;
 use yii\web\UploadedFile;
 
-class CreateTicketForm extends Model implements CreateTicketInputInterface
+abstract class AbstractSendMessageInputForm extends Model
 {
     use ContainerAwareTrait;
     use ModelGetRulesTrait;
 
-    public $subject;
     public $text;
 
     public $filesMimeTypes = 'text/plain';
 
+    protected $ticket;
     protected $_files;
     protected $customer;
     protected $attachments = [];
 
     public function rules()
     {
-        $rules = array_merge(
-            $this->getModelRulesByFields(TicketInterface::class, ['subject']),
+        return array_merge(
             $this->getModelRulesByFields(MessageInterface::class, ['text']),
             [
                 [['files'], 'file', 'maxFiles' => '5', 'mimeTypes' => $this->filesMimeTypes],
             ]
         );
+    }
 
-        return $rules;
+    public function setTicket(TicketInterface $ticket)
+    {
+        $this->ticket = $ticket;
+
+        return $this;
+    }
+
+    public function getTicket(): TicketInterface
+    {
+        return $this->ticket;
     }
 
     public function getCustomer(): UserInterface
@@ -49,11 +57,6 @@ class CreateTicketForm extends Model implements CreateTicketInputInterface
         $this->customer = $customer;
 
         return $this;
-    }
-
-    public function getSubject(): string
-    {
-        return $this->subject;
     }
 
     public function getText(): string

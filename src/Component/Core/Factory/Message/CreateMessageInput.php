@@ -1,10 +1,10 @@
 <?php
 
-namespace SSupport\Component\Core\Gateway\Repository\Message;
+namespace SSupport\Component\Core\Factory\Message;
 
 use SSupport\Component\Core\Entity\UserInterface;
 
-class CreateMessageRepositoryInput implements CreateMessageRepositoryInputInterface
+class CreateMessageInput implements CreateMessageInputInterface
 {
     private $text;
     private $attachments;

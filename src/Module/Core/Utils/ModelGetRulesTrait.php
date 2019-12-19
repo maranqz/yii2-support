@@ -17,9 +17,8 @@ trait ModelGetRulesTrait
     {
         $neededFieldsTable = array_fill_keys($neededFields, true);
         $rulesByFiled = [];
-        foreach ($rules as $index => &$rule) {
+        foreach ($rules as $index => $rule) {
             $fields = $rule[0];
-            $rule[0] = [];
             foreach ($fields as $field) {
                 if (empty($neededFieldsTable[$field])) {
                     continue;
@@ -37,18 +36,24 @@ trait ModelGetRulesTrait
 
     protected function getResultRules($rules, $neededFields, $rulesByFiled)
     {
-        $resultRule = [];
+        $rules = array_map(function ($rule) {
+            $rule[0] = [];
+
+            return $rule;
+        }, $rules);
+
+        $resultRules = [];
         foreach ($neededFields as $neededField) {
             foreach ($rulesByFiled[$neededField] as $ruleIndexes) {
-                if (empty($resultRule[$ruleIndexes])) {
-                    $resultRule[$ruleIndexes] = $rules[$ruleIndexes];
+                if (empty($resultRules[$ruleIndexes])) {
+                    $resultRules[$ruleIndexes] = $rules[$ruleIndexes];
                 }
 
-                $fields = &$resultRule[$ruleIndexes][0];
+                $fields = &$resultRules[$ruleIndexes][0];
                 $fields[] = $neededField;
             }
         }
 
-        return $resultRule;
+        return $resultRules;
     }
 }

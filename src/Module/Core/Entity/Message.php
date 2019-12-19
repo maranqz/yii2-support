@@ -8,7 +8,6 @@ use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Entity\UserInterface;
 use SSupport\Module\Core\Entity\Utils\CreatedAtTrait;
 use SSupport\Module\Core\Entity\Utils\IdentifyTrait;
-use SSupport\Module\Core\Gateway\Repository\MessageRepository;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use Yii;
 use yii\behaviors\TimestampBehavior;
@@ -46,14 +45,14 @@ class Message extends ActiveRecord implements MessageInterface
                 ['sender_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => $this->getClass(UserInterface::class),
+                'targetClass' => $this->getDIClass(UserInterface::class),
                 'targetAttribute' => ['sender_id' => 'id'],
             ],
             [
                 ['ticket_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => $this->getClass(TicketInterface::class),
+                'targetClass' => $this->getDIClass(TicketInterface::class),
                 'targetAttribute' => ['ticket_id' => 'id'],
             ],
         ];
@@ -62,11 +61,11 @@ class Message extends ActiveRecord implements MessageInterface
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('yii2-support', 'ID'),
-            'ticket_id' => Yii::t('yii2-support', 'Ticket ID'),
-            'sender_id' => Yii::t('yii2-support', 'Sender ID'),
-            'text' => Yii::t('yii2-support', 'Text'),
-            'created_at' => Yii::t('yii2-support', 'Created At'),
+            'id' => Yii::t('ssupport', 'ID'),
+            'ticket_id' => Yii::t('ssupport', 'Ticket ID'),
+            'sender_id' => Yii::t('ssupport', 'Sender ID'),
+            'text' => Yii::t('ssupport', 'Text'),
+            'created_at' => Yii::t('ssupport', 'Created At'),
         ];
     }
 
@@ -89,13 +88,30 @@ class Message extends ActiveRecord implements MessageInterface
 
     protected function getAttachmentsQuery()
     {
-        return $this->hasMany($this->getClass(AttachmentInterface::class), ['message_id' => 'id']);
+        return $this->hasMany($this->getDIClass(AttachmentInterface::class), ['message_id' => 'id']);
+    }
+
+    /** @param AttachmentInterface[] $attachments */
+    public function addAttachments(iterable $attachments): MessageInterface
+    {
+        foreach ($attachments as $attachment) {
+            $this->addAttachment($attachment);
+        }
+
+        return $this;
     }
 
     /** @param AttachmentInterface|ActiveRecordInterface $attachment */
     public function addAttachment(AttachmentInterface $attachment): MessageInterface
     {
         $this->link('attachmentsQuery', $attachment);
+
+        return $this;
+    }
+
+    public function setSender(UserInterface $sender): self
+    {
+        $this->__set('sender_id', $sender->getId());
 
         return $this;
     }
@@ -107,7 +123,7 @@ class Message extends ActiveRecord implements MessageInterface
 
     protected function getSenderQuery()
     {
-        return $this->hasOne($this->getClass(UserInterface::class), ['id' => 'sender_id']);
+        return $this->hasOne($this->getDIClass(UserInterface::class), ['id' => 'sender_id']);
     }
 
     public function getTicket(): TicketInterface
@@ -117,11 +133,6 @@ class Message extends ActiveRecord implements MessageInterface
 
     protected function getTicketQuery()
     {
-        return $this->hasOne($this->getClass(TicketInterface::class), ['id' => 'ticket_id']);
-    }
-
-    public static function find()
-    {
-        return new MessageRepository(\get_called_class());
+        return $this->hasOne($this->getDIClass(TicketInterface::class), ['id' => 'ticket_id']);
     }
 }
