@@ -60,7 +60,7 @@ class CreateTicket implements CreateTicketInterface
         $noticeAgents = $this->userRepository->getNoticeAgentsNewTicket($ticket);
         $this->notifier->sendTicket($noticeAgents, $ticket, $message);
 
-        $this->eventDispatcher->dispatch(new AfterCreateTicket($ticket));
+        $this->eventDispatcher->dispatch(new AfterCreateTicket($ticketInput, $ticket));
 
         return $ticket;
     }

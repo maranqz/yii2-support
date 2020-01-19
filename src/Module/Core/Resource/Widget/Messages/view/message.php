@@ -2,10 +2,14 @@
 
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\UserInterface;
+use SSupport\Module\Core\Resource\Assets\CommonAsset\CommonAsset;
+use SSupport\Module\Core\Resource\Widget\AttachmentPath\AttachmentPathWidget;
 use yii\helpers\Html;
 
 /* @var $model MessageInterface */
 /* @var $currentUser UserInterface */
+
+CommonAsset::register($this);
 
 $attachments = $model->getAttachments();
 ?>
@@ -24,10 +28,14 @@ $attachments = $model->getAttachments();
                 <?= Html::a(
                     sprintf('%s (%s)',
                         $attachment->getName(),
-                        Yii::$app->formatter->asShortSize($attachment->getSize())
+                        Yii::$app->formatter->asSize($attachment->getSize())
                     ),
-                        $attachment->getPath() // @TODO создать хелпер для получения пути в зависимости от адаптера файловой системы
-                    ); ?>
+                    AttachmentPathWidget::widget(['path' => $attachment->getPath()]),
+                    [
+                        'class' => 'text-break',
+                        'target' => '_blank',
+                    ]
+                ); ?>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>

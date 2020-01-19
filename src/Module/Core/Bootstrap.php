@@ -2,8 +2,8 @@
 
 namespace SSupport\Module\Core;
 
-use Exception;
 use League\Flysystem\Adapter\Local;
+use League\Flysystem\AdapterInterface;
 use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
@@ -17,7 +17,13 @@ use SSupport\Component\Core\Gateway\Notification\NotifierInterface;
 use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
 use SSupport\Component\Core\Gateway\Repository\User\GetTicketDefaultAgentsInterface;
 use SSupport\Component\Core\Gateway\Repository\User\UserRepositoryInterface;
+use SSupport\Component\Core\Gateway\Uploader\AttachmentPathGeneratorInterface;
+use SSupport\Component\Core\Gateway\Uploader\AttachmentUpload;
+use SSupport\Component\Core\Gateway\Uploader\AttachmentUploadInterface;
+use SSupport\Component\Core\Gateway\Uploader\DefaultAttachmentPathGenerator;
+use SSupport\Component\Core\Gateway\Uploader\UploaderInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicket;
+use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessage;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
@@ -26,11 +32,20 @@ use SSupport\Module\Core\Entity\Message;
 use SSupport\Module\Core\Entity\Ticket;
 use SSupport\Module\Core\Factory\Factory;
 use SSupport\Module\Core\Factory\Message\MessageFactory;
+use SSupport\Module\Core\Gateway\Filesystem\LocalUrlAdapter;
+use SSupport\Module\Core\Gateway\Filesystem\UrlAdapterInterface;
 use SSupport\Module\Core\Gateway\Notification\Notifier;
 use SSupport\Module\Core\Gateway\Repository\TicketRepository;
 use SSupport\Module\Core\Gateway\Repository\User\UserRepository;
+use SSupport\Module\Core\Gateway\Uploader\AttachmentUploadListener;
+use SSupport\Module\Core\Gateway\Uploader\Uploader;
+use SSupport\Module\Core\Gateway\Uploader\UploadFileConverterAttachment;
+use SSupport\Module\Core\Gateway\Uploader\UploadFileConverterAttachmentInterface;
 use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm;
+use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettings;
+use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettingsInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
@@ -43,10 +58,28 @@ class Bootstrap implements BootstrapInterface
 {
     use ContainerAwareTrait;
 
+    const LOCAL_ATTACHMENTS_DIRECTORY = '/support/attachment/';
+
+    /** @var Module */
+    protected $module;
+
     /** {@inheritdoc} */
     public function bootstrap($app)
     {
-        $this->initContainer();
+        if (!$this->initModule($app)) {
+            return;
+        }
+
+        $this->checkRequiredClass();
+
+        $this->initAliases();
+
+        $this->initDefaultFilesystem();
+        $this->initEntity();
+        $this->initFactory();
+        $this->initGateway();
+        $this->initUseCase();
+        $this->initForm();
         $this->initTranslations($app);
 
         if ($app instanceof WebApplication) {
@@ -54,85 +87,111 @@ class Bootstrap implements BootstrapInterface
         }
     }
 
-    protected function initContainer()
-    {
-        try {
-            $this->checkRequiredClass();
-            $this->initDefaultFilesystem();
-            $this->initEntity();
-            $this->initFactory();
-            $this->initGateway();
-            $this->initUseCase();
-            $this->initForm();
-        } catch (Exception $e) {
-            die($e);
-        }
-    }
-
     protected function checkRequiredClass()
     {
         $this->checkDIClass(UserInterface::class);
-        $this->checkDIClass(EventDispatcherInterface::class);
+    }
+
+    protected function initAliases()
+    {
+        $this->getModule()->setAliases([
+            '@support' => __DIR__,
+        ]);
     }
 
     protected function initEntity()
     {
-        $di = $this->getDi();
-
-        $di->set(TicketInterface::class, Ticket::class);
-        $di->set(MessageInterface::class, Message::class);
-        $di->set(AttachmentInterface::class, Attachment::class);
+        $this->setSingleton(TicketInterface::class, Ticket::class);
+        $this->setSingleton(MessageInterface::class, Message::class);
+        $this->setSingleton(AttachmentInterface::class, Attachment::class);
     }
 
     protected function initFactory()
     {
-        $di = $this->getDi();
-
-        $di->set(FactoryInterface::class.'.Ticket', Factory::class, [
+        $this->setSingleton(FactoryInterface::class.'.Ticket', Factory::class, [
             $this->getDIClass(TicketInterface::class),
         ]);
 
-        $di->set(MessageFactoryInterface::class, MessageFactory::class);
+        $this->setSingleton(MessageFactoryInterface::class, MessageFactory::class);
     }
 
     protected function initGateway()
     {
+        $this->initEvent();
         $this->initRepository();
 
-        $di = $this->getDi();
-        $di->set(NotifierInterface::class, Notifier::class);
+        $this->setSingleton(NotifierInterface::class, Notifier::class);
+
+        $this->setSingleton(
+            AttachmentPathGeneratorInterface::class,
+            DefaultAttachmentPathGenerator::class
+        );
+
+        $this->setSingleton(UrlAdapterInterface::class, LocalUrlAdapter::class, [
+            static::LOCAL_ATTACHMENTS_DIRECTORY,
+        ]);
+
+        $this->initUploader();
+    }
+
+    protected function initEvent()
+    {
+        $this->setSingleton(EventDispatcherInterface::class, EventDispatcher::class);
     }
 
     protected function initRepository()
     {
-        $di = $this->getDi();
-
         $this->checkDIClass(GetTicketDefaultAgentsInterface::class);
 
-        $di->set(UserRepositoryInterface::class, UserRepository::class, [
+        $this->setSingleton(UserRepositoryInterface::class, UserRepository::class, [
             $this->getDIClass(UserInterface::class),
         ]);
 
-        $di->set(TicketRepositoryInterface::class, TicketRepository::class);
-        //$di->set(AttachmentRepositoryInterface::class, AttachmentRepository::class);
+        $this->setSingleton(TicketRepositoryInterface::class, TicketRepository::class);
+    }
+
+    protected function initUploader()
+    {
+        $this->setSingleton(UploaderInterface::class, Uploader::class);
+        $this->set(AttachmentUploadInterface::class, AttachmentUpload::class);
+        $this->set(
+            UploadFileConverterAttachmentInterface::class,
+            UploadFileConverterAttachment::class
+        );
+
+        /** @var EventDispatcher $dispatcher */
+        $dispatcher = $this->make(EventDispatcherInterface::class);
+        $uploadListener = $this->make(AttachmentUploadListener::class);
+
+        foreach ($this->getModule()->uploaderListenerEvents as $event) {
+            $dispatcher->addListener($event, $uploadListener);
+        }
     }
 
     protected function initUseCase()
     {
-        $di = $this->getDi();
-
-        $di->set(CreateTicket::class, CreateTicket::class, [
-            4 => $di->get(FactoryInterface::class.'.Ticket'),
+        $this->setSingleton(CreateTicketInterface::class, CreateTicket::class, [
+            4 => $this->make(FactoryInterface::class.'.Ticket'),
         ]);
 
-        $di->set(SendMessageInterface::class, SendMessage::class);
+        $this->setSingleton(SendMessageInterface::class, SendMessage::class);
     }
 
     protected function initForm()
     {
-        $di = $this->getDi();
+        $this->setSingleton(SendMessageInputInterface::class, SendMessageInputForm::class);
 
-        $di->set(SendMessageInputInterface::class, SendMessageInputForm::class);
+        $this->setSingleton(AttachmentUploadSettingsInterface::class, AttachmentUploadSettings::class, [
+            [
+                [
+                    ['files'],
+                    'file',
+                    'maxFiles' => 5,
+                    'mimeTypes' => Module::DEFAULT_ATTACHMENTS_MIME_TYPE,
+                ],
+            ],
+            Module::DEFAULT_ATTACHMENTS_MIME_TYPE,
+        ]);
     }
 
     protected function initTranslations(Application $app)
@@ -148,17 +207,15 @@ class Bootstrap implements BootstrapInterface
 
     protected function initDefaultFilesystem()
     {
-        $di = $this->getDi();
-        if (!$di->has(FilesystemInterface::class)) {
-            $di->set(FilesystemInterface::class, function () {
-                $path = Yii::getAlias('@webroot/support/attachment');
-                FileHelper::createDirectory($path);
+        if (!$this->getDi()->has(FilesystemInterface::class)) {
+            $path = Yii::getAlias('@webroot'.static::LOCAL_ATTACHMENTS_DIRECTORY);
+            FileHelper::createDirectory($path);
 
-                $adapter = new Local($path);
-
-                return new Filesystem($adapter);
-            });
+            $this->setSingleton(AdapterInterface::class, Local::class, [$path]);
+            $this->setSingleton(FilesystemInterface::class, Filesystem::class);
         }
+
+        $this->checkDIClass(AdapterInterface::class);
     }
 
     protected function initWebApplication(WebApplication $app)
@@ -188,5 +245,24 @@ class Bootstrap implements BootstrapInterface
     protected function initView(WebApplication $app)
     {
         $app->getModule(Module::$name)->setViewPath('@SSupport/Module/Core/Resource/views');
+    }
+
+    protected function initModule(Application $app)
+    {
+        if ($app->hasModule(Module::$name)) {
+            $module = $app->getModule(Module::$name);
+            if ($module instanceof Module) {
+                $this->module = $module;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function getModule()
+    {
+        return $this->module;
     }
 }

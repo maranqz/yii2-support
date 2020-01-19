@@ -2,6 +2,7 @@
 
 namespace SSupport\Module\Core\Entity;
 
+use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use SSupport\Component\Core\Entity\AttachmentInterface;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
@@ -31,6 +32,12 @@ class Message extends ActiveRecord implements MessageInterface
             [
                 'class' => TimestampBehavior::className(),
                 'updatedAtAttribute' => false,
+            ],
+            [
+                'class' => SaveRelationsBehavior::class,
+                'relations' => [
+                    'attachmentsQuery',
+                ],
             ],
         ];
     }
@@ -104,7 +111,10 @@ class Message extends ActiveRecord implements MessageInterface
     /** @param AttachmentInterface|ActiveRecordInterface $attachment */
     public function addAttachment(AttachmentInterface $attachment): MessageInterface
     {
-        $this->link('attachmentsQuery', $attachment);
+        $attachments = $this->getAttachments();
+        $attachments[] = $attachment;
+
+        $this->__set('attachmentsQuery', $attachments);
 
         return $this;
     }

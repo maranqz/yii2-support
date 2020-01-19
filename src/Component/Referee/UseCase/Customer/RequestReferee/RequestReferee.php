@@ -32,6 +32,6 @@ class RequestReferee implements RequestRefereeInterface
 
         $this->notifier->customerRequestReferee($recipients, $inputDTO->getTicket());
 
-        $this->eventDispatcher->dispatch(new AfterRequestReferee());
+        $this->eventDispatcher->dispatch(new AfterRequestReferee($inputDTO));
     }
 }

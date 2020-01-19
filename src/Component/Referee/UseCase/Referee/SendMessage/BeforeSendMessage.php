@@ -2,9 +2,9 @@
 
 namespace SSupport\Component\Referee\UseCase\Referee\SendMessage;
 
-use SSupport\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event\StoppableEvent;
 
-class BeforeSendMessage extends Event implements BeforeSendMessageInterface
+class BeforeSendMessage extends StoppableEvent implements BeforeSendMessageInterface
 {
     protected $inputDTO;
 

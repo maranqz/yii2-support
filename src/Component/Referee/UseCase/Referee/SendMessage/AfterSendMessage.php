@@ -3,9 +3,9 @@
 namespace SSupport\Component\Referee\UseCase\Referee\SendMessage;
 
 use SSupport\Component\Core\Entity\MessageInterface;
-use SSupport\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event\StoppableEvent;
 
-class AfterSendMessage extends Event implements AfterSendMessageInterface
+class AfterSendMessage extends StoppableEvent implements AfterSendMessageInterface
 {
     protected $message;
 

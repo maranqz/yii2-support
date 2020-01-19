@@ -2,9 +2,9 @@
 
 namespace SSupport\Component\Core\UseCase\Customer\CreateTicket;
 
-use SSupport\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event\StoppableEvent;
 
-class BeforeCreateTicket extends Event implements BeforeCreateTicketInterface
+class BeforeCreateTicket extends StoppableEvent implements BeforeCreateTicketInterface
 {
     protected $ticketInput;
 

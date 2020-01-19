@@ -39,12 +39,16 @@ class MessageController extends Controller
         $ticket = $this->findModel($ticket_id);
         $model->setTicket($ticket);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $model->setCustomer(Yii::$app->getUser()->getIdentity());
+            Yii::$app->db->transaction(function () use ($model) {
+                $model->setCustomer(Yii::$app->getUser()->getIdentity());
 
-            $this->make(SendMessageInterface::class)($model);
-            $ticket->save();
+                $this->make(SendMessageInterface::class)($model);
+            });
 
-            return $this->redirect([IndexController::PATH.'/view', 'id' => $ticket->getId()]);
+            return $this->redirect([
+                IndexController::PATH.'/view',
+                'id' => $ticket->getId(),
+            ]);
         }
 
         return $this->renderContent(MessageFormWidget::widget([

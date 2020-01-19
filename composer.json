@@ -3,14 +3,15 @@
   "description": "yii2 realization of simple support interface",
   "type": "project",
   "license": "MIT",
-  "minimum-stability": "stable",
+  "minimum-stability": "dev",
   "require": {
     "php": ">=7.2 <8",
     "doctrine/collections": "1.*",
     "psr/event-dispatcher": "^1.0",
     "yiisoft/yii2-dev": "2.*",
+    "la-haute-societe/yii2-save-relations-behavior": "^1.7",
     "league/flysystem": "^1.0",
-    "la-haute-societe/yii2-save-relations-behavior": "^1.7"
+    "symfony/event-dispatcher": "v4.*"
   },
   "replace": {
     "maranqz/support-core-component": "self.version",

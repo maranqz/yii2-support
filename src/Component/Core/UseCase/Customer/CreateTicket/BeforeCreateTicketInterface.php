@@ -2,7 +2,9 @@
 
 namespace SSupport\Component\Core\UseCase\Customer\CreateTicket;
 
-interface BeforeCreateTicketInterface
+use SSupport\Component\Core\UseCase\InputAwareInterface;
+
+interface BeforeCreateTicketInterface extends InputAwareInterface
 {
     public function getInput(): CreateTicketInputInterface;
 }

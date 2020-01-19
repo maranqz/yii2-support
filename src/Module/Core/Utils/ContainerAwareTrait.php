@@ -35,4 +35,28 @@ trait ContainerAwareTrait
             throw new InvalidConfigException('Failed to instantiate component or class "'.$class.'".');
         }
     }
+
+    protected function set($class, $definition = [], array $params = [], $replace = false)
+    {
+        $di = $this->getDi();
+        if (!$replace && $di->has($class)) {
+            return $this;
+        }
+
+        $di->set($class, $definition, $params);
+
+        return $this;
+    }
+
+    protected function setSingleton($class, $definition = [], array $params = [], $replace = false)
+    {
+        $di = $this->getDi();
+        if (!$replace && $di->has($class)) {
+            return $this;
+        }
+
+        $di->setSingleton($class, $definition, $params);
+
+        return $this;
+    }
 }

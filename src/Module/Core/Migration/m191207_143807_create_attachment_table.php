@@ -18,9 +18,9 @@ class m191207_143807_create_attachment_table extends Migration
         $this->createTable('{{%attachment}}', [
             'id' => $this->primaryKey(),
             'message_id' => $this->integer()->notNull(),
+            'name' => $this->string(256)->notNull(),
             'path' => $this->text()->notNull(),
             'size' => $this->integer()->notNull(),
-            'driver' => $this->string()->notNull(),
         ]);
 
         // creates index for column `message_id`

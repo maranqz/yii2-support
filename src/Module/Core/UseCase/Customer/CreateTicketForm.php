@@ -2,38 +2,46 @@
 
 namespace SSupport\Module\Core\UseCase\Customer;
 
-use SSupport\Component\Core\Entity\AttachmentInterface;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Gateway\Uploader\AttachmentUploadsAwareInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInputInterface;
+use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettingsAwareTrait;
+use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettingsInterface;
+use SSupport\Module\Core\UseCase\Form\AttachmentUploadsTrait;
+use SSupport\Module\Core\UseCase\Form\FileAcceptAwareInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use SSupport\Module\Core\Utils\ModelGetRulesTrait;
 use yii\base\Model;
-use yii\web\UploadedFile;
 
-class CreateTicketForm extends Model implements CreateTicketInputInterface
+class CreateTicketForm extends Model implements CreateTicketInputInterface, AttachmentUploadsAwareInterface, FileAcceptAwareInterface
 {
     use ContainerAwareTrait;
     use ModelGetRulesTrait;
+    use AttachmentUploadsTrait;
+    use AttachmentUploadSettingsAwareTrait;
 
     public $subject;
     public $text;
 
-    public $filesMimeTypes = 'text/plain';
-
-    protected $_files;
     protected $customer;
-    protected $attachments = [];
+
+    public function __construct(
+        AttachmentUploadSettingsInterface $attachmentUploadSettings,
+        $config = []
+    ) {
+        parent::__construct($config);
+
+        $this->attachmentUploadSettings = $attachmentUploadSettings;
+    }
 
     public function rules()
     {
         $rules = array_merge(
             $this->getModelRulesByFields(TicketInterface::class, ['subject']),
             $this->getModelRulesByFields(MessageInterface::class, ['text']),
-            [
-                [['files'], 'file', 'maxFiles' => '5', 'mimeTypes' => $this->filesMimeTypes],
-            ]
+            $this->attachmentUploadSettings->getRules()
         );
 
         return $rules;
@@ -59,49 +67,5 @@ class CreateTicketForm extends Model implements CreateTicketInputInterface
     public function getText(): string
     {
         return $this->text;
-    }
-
-    public function getAttachments(): iterable
-    {
-        return $this->attachments;
-    }
-
-    public function load($data, $formName = null)
-    {
-        return parent::load($data, $formName) && $this->loadAttachments();
-    }
-
-    protected function loadAttachments()
-    {
-        $this->setFiles(UploadedFile::getInstances($this, 'files'));
-        $this->setAttachments();
-
-        return $this;
-    }
-
-    protected function setFiles(iterable $files)
-    {
-        $this->_files = $files;
-
-        return $this;
-    }
-
-    protected function setAttachments()
-    {
-        $attachments = [];
-        foreach ($this->getFiles() as $file) {
-            $attachments[] = $this->make(AttachmentInterface::class, [], [
-                'path' => $file->getBaseName().'.'.microtime(true).'.'.$file->getExtension(),
-                'size' => $file->size,
-            ]);
-        }
-
-        $this->attachments = $attachments;
-    }
-
-    /** @return UploadedFile[] */
-    public function getFiles()
-    {
-        return $this->_files;
     }
 }

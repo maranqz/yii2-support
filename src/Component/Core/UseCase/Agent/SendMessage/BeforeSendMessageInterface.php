@@ -2,7 +2,9 @@
 
 namespace SSupport\Component\Core\UseCase\Agent\SendMessage;
 
-interface BeforeSendMessageInterface
+use SSupport\Component\Core\UseCase\InputAwareInterface;
+
+interface BeforeSendMessageInterface extends InputAwareInterface
 {
     public function getInput(): SendMessageInputInterface;
 }

@@ -12,8 +12,13 @@ class CreateTicketInput implements CreateTicketInputInterface
     protected $text;
     protected $attachments;
 
-    public function __construct(UserInterface $customer, iterable $agents, $subject, $text, iterable $attachments = null)
-    {
+    public function __construct(
+        UserInterface $customer,
+        iterable $agents,
+        $subject,
+        $text,
+        iterable $attachments = null
+    ) {
         $this->customer = $customer;
         $this->agents = $agents;
         $this->subject = $subject;
@@ -21,7 +26,7 @@ class CreateTicketInput implements CreateTicketInputInterface
         $this->attachments = $attachments;
     }
 
-    public function getCustomer()
+    public function getCustomer(): UserInterface
     {
         return $this->customer;
     }
@@ -31,17 +36,17 @@ class CreateTicketInput implements CreateTicketInputInterface
         return $this->agents;
     }
 
-    public function getSubject()
+    public function getSubject(): string
     {
         return $this->subject;
     }
 
-    public function getText()
+    public function getText(): string
     {
         return $this->text;
     }
 
-    public function getAttachments()
+    public function getAttachments(): iterable
     {
         return $this->attachments;
     }

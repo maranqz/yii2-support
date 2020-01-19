@@ -6,7 +6,7 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
-/*
+/**
  * @var View $this
  * @var AbstractSendMessageInputForm $model
  * @var string $action
@@ -30,7 +30,7 @@ use yii\widgets\Pjax;
 
     <?= $form->field($model, 'files[]')->fileInput([
         'multiple' => true,
-        'accept' => $model->filesMimeTypes,
+        'accept' => $model->getAcceptType(),
     ]); ?>
 
 

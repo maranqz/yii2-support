@@ -49,7 +49,7 @@ class SendMessage implements SendMessageInterface
 
         $this->notifier->sendMessageFromAgent($recipients, $inputDTO->getTicket(), $message);
 
-        $this->eventDispatcher->dispatch(new AfterSendMessage($message));
+        $this->eventDispatcher->dispatch(new AfterSendMessage($inputDTO, $message));
 
         return $message;
     }

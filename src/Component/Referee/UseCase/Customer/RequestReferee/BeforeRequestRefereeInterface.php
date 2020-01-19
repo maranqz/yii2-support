@@ -2,7 +2,9 @@
 
 namespace SSupport\Component\Referee\UseCase\Customer\RequestReferee;
 
-interface BeforeRequestRefereeInterface
+use SSupport\Component\Core\UseCase\InputAwareInterface;
+
+interface BeforeRequestRefereeInterface extends InputAwareInterface
 {
     public function getInput(): RequestRefereeInputInterface;
 }

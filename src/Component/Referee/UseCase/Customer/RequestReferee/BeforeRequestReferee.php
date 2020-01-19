@@ -2,9 +2,9 @@
 
 namespace SSupport\Component\Referee\UseCase\Customer\RequestReferee;
 
-use SSupport\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event\StoppableEvent;
 
-class BeforeRequestReferee extends Event implements BeforeRequestRefereeInterface
+class BeforeRequestReferee extends StoppableEvent implements BeforeRequestRefereeInterface
 {
     protected $inputDTO;
 

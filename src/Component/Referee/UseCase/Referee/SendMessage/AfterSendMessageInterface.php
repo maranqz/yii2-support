@@ -3,8 +3,9 @@
 namespace SSupport\Component\Referee\UseCase\Referee\SendMessage;
 
 use SSupport\Component\Core\Entity\MessageInterface;
+use SSupport\Component\Core\UseCase\InputAwareInterface;
 
-interface AfterSendMessageInterface
+interface AfterSendMessageInterface extends InputAwareInterface
 {
     public function getMessage(): MessageInterface;
 }

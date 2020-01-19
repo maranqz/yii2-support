@@ -22,9 +22,10 @@ class Attachment extends ActiveRecord implements AttachmentInterface
     public function rules()
     {
         return [
-            [['message_id', 'path', 'size', 'driver'], 'required'],
+            [['message_id', 'path', 'size', 'name'], 'required'],
             [['message_id', 'size'], 'integer'],
-            [['path'], 'string'],
+            [['name'], 'string', 'max' => 256],
+            [['path'], 'string', 'max' => 1024],
             [
                 ['message_id'],
                 'exist',
@@ -41,6 +42,7 @@ class Attachment extends ActiveRecord implements AttachmentInterface
             'id' => Yii::t('yii2-support', 'ID'),
             'message_id' => Yii::t('yii2-support', 'Message ID'),
             'path' => Yii::t('yii2-support', 'Path'),
+            'name' => Yii::t('yii2-support', 'Name'),
             'size' => Yii::t('yii2-support', 'Size'),
         ];
     }
@@ -52,7 +54,7 @@ class Attachment extends ActiveRecord implements AttachmentInterface
 
     public function getName(): string
     {
-        return basename($this->getPath());
+        return $this->__get('name');
     }
 
     public function getSize()

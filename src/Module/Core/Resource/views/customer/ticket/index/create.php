@@ -25,7 +25,7 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?= $form->field($model, 'files[]')->fileInput([
             'multiple' => true,
-            'accept' => $model->filesMimeTypes,
+            'accept' => $model->getAcceptType(),
         ]); ?>
 
         <div class="form-group">

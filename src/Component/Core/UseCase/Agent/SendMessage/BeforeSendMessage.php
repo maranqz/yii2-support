@@ -2,19 +2,19 @@
 
 namespace SSupport\Component\Core\UseCase\Agent\SendMessage;
 
-use SSupport\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event\StoppableEvent;
 
-class BeforeSendMessage extends Event implements BeforeSendMessageInterface
+class BeforeSendMessage extends StoppableEvent implements BeforeSendMessageInterface
 {
-    protected $inputDTO;
+    protected $input;
 
-    public function __construct(SendMessageInputInterface $inputDTO)
+    public function __construct(SendMessageInputInterface $input)
     {
-        $this->inputDTO = $inputDTO;
+        $this->input = $input;
     }
 
     public function getInput(): SendMessageInputInterface
     {
-        return $this->inputDTO;
+        return $this->input;
     }
 }

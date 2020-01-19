@@ -2,8 +2,19 @@
 
 namespace SSupport\Component\Referee\UseCase\Customer\RequestReferee;
 
-use SSupport\Component\Core\Gateway\Event;
+use SSupport\Component\Core\Gateway\Event\StoppableEvent;
 
-class AfterRequestReferee extends Event implements AfterRequestRefereeInterface
+class AfterRequestReferee extends StoppableEvent implements AfterRequestRefereeInterface
 {
+    protected $input;
+
+    public function __construct(RequestRefereeInputInterface $input)
+    {
+        $this->input = $input;
+    }
+
+    public function getInput(): RequestRefereeInputInterface
+    {
+        return $this->input;
+    }
 }
