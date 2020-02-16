@@ -132,6 +132,8 @@ class Ticket extends ActiveRecord implements TicketInterface
 
     public function getCustomer(): UserInterface
     {
+        $a = 1;
+
         return $this->__get('relatedCustomer');
     }
 

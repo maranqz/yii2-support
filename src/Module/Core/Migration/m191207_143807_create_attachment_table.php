@@ -1,5 +1,7 @@
 <?php
 
+namespace SSupport\Module\Core\Migration;
+
 use yii\db\Migration;
 
 /**

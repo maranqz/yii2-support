@@ -4,29 +4,48 @@ namespace SSupport\Module\Core\Controller\customer\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInterface;
-use SSupport\Module\Core\Entity\Ticket;
-use SSupport\Module\Core\Entity\TicketSearch;
+use SSupport\Module\Core\Gateway\Repository\GetTicketByIdTrait;
+use SSupport\Module\Core\Module;
+use SSupport\Module\Core\RBAC\IsOwnerCustomerRule;
+use SSupport\Module\Core\Resource\config\GridView\CustomerGridViewSettingsInterface;
 use SSupport\Module\Core\UseCase\Customer\CreateTicketForm;
+use SSupport\Module\Core\UseCase\Customer\TicketSearch;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
+use SSupport\Module\Core\Utils\CoreModuleAwareTrait;
 use Yii;
 use yii\data\ActiveDataProvider;
-use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 
 class IndexController extends Controller
 {
     use ContainerAwareTrait;
+    use CoreModuleAwareTrait;
+    use GetTicketByIdTrait;
 
     const PATH = 'customer/ticket/index';
 
     public function behaviors()
     {
         return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
+            'access' => [
+                'class' => AccessControl::class,
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'create'],
+                        'roles' => [Module::CUSTOMER_ROLE],
+                    ],
+                    [
+                        'allow' => true,
+                        'permissions' => [IsOwnerCustomerRule::NAME],
+                        'roleParams' => function () {
+                            return [
+                                'ticket' => $this->getTicketById(Yii::$app->request->get('ticketId')),
+                            ];
+                        },
+                    ],
                 ],
             ],
         ];
@@ -34,18 +53,25 @@ class IndexController extends Controller
 
     public function actionIndex()
     {
+        /** @var TicketSearch $searchModel */
         $searchModel = $this->make(TicketSearch::class);
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = $searchModel->search(Yii::$app->getUser()->getId(), Yii::$app->request->queryParams);
+
+        $gridViewSettings = $this->make(
+            CustomerGridViewSettingsInterface::class,
+            [$dataProvider, $searchModel, $this->getSupportCoreModule()->urlCreateGrid]
+        );
 
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
+            'gridViewConfig' => ($this->getSupportCoreModule()->customerGridViewConfig)($gridViewSettings),
         ]);
     }
 
-    public function actionView($id)
+    public function actionView($ticketId)
     {
-        $ticket = $this->findModel($id);
+        $ticket = $this->findModel($ticketId);
         $messagesProvider = new ActiveDataProvider([
             'query' => $ticket->getRelatedMessages(),
             'sort' => [
@@ -58,6 +84,7 @@ class IndexController extends Controller
         return $this->render('view', [
             'ticket' => $ticket,
             'messagesProvider' => $messagesProvider,
+            'detailView' => $this->getSupportCoreModule()->getViewDetailConfig($ticket),
         ]);
     }
 
@@ -74,7 +101,7 @@ class IndexController extends Controller
                 return $this->make(CreateTicketInterface::class)($model);
             });
 
-            return $this->redirect(['view', 'id' => $ticket->getId()]);
+            return $this->redirect(['view', 'ticketId' => $ticket->getId()]);
         }
 
         return $this->render('create', [
@@ -84,7 +111,7 @@ class IndexController extends Controller
 
     protected function findModel($id)
     {
-        if (null !== ($model = Ticket::findOne($id))) {
+        if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
             return $model;
         }
 

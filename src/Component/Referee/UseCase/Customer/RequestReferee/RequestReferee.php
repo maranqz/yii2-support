@@ -4,7 +4,7 @@ namespace SSupport\Component\Referee\UseCase\Customer\RequestReferee;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SSupport\Component\Referee\Gateway\Notification\NotifierInterface;
-use SSupport\Component\Referee\Gateway\Repository\UserRepositoryInterface;
+use SSupport\Component\Referee\Gateway\Repository\RefereeUserRepositoryInterface;
 
 class RequestReferee implements RequestRefereeInterface
 {
@@ -13,7 +13,7 @@ class RequestReferee implements RequestRefereeInterface
     protected $eventDispatcher;
 
     public function __construct(
-        UserRepositoryInterface $userRepository,
+        RefereeUserRepositoryInterface $userRepository,
         NotifierInterface $notifier,
         EventDispatcherInterface $eventDispatcher
     ) {
@@ -24,9 +24,16 @@ class RequestReferee implements RequestRefereeInterface
 
     public function __invoke(RequestRefereeInputInterface $inputDTO)
     {
+        if (!empty($inputDTO->getTicket()->getReferee())) {
+            throw new RefereeRequestedException();
+        }
+
         $this->eventDispatcher->dispatch(new BeforeRequestReferee($inputDTO));
 
-        $inputDTO->getTicket()->assignReferee($inputDTO->getReferee());
+        $inputDTO->getTicket()->assignReferee(
+            $this->userRepository->getRefereeForTicket($inputDTO->getTicket()),
+            $inputDTO->getRequester()
+        );
 
         $recipients = $this->userRepository->getRecipientsForTicketFromReferee($inputDTO->getTicket());
 

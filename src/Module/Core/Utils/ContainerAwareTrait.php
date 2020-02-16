@@ -19,21 +19,44 @@ trait ContainerAwareTrait
 
     public function getDIClass($class)
     {
-        return $this->getDIDefinition($class)['class'];
+        $this->checkDIClass($class);
+
+        return $this->getDIClassOrNull($class);
+    }
+
+    protected function getDIClassOrNull($class)
+    {
+        if ($this->hasDICass($class)) {
+            $definitions = $this->getDIDefinitionOrNull($class);
+
+            return $this->getDIClassOrNull($definitions['class']);
+        }
+
+        return $class;
     }
 
     public function getDIDefinition($class)
     {
         $this->checkDIClass($class);
 
+        return $this->getDIDefinitionOrNull($class);
+    }
+
+    public function getDIDefinitionOrNull($class)
+    {
         return $this->getDi()->getDefinitions()[$class];
     }
 
     public function checkDIClass($class)
     {
-        if (!$this->getDi()->has($class)) {
+        if (!$this->hasDICass($class)) {
             throw new InvalidConfigException('Failed to instantiate component or class "'.$class.'".');
         }
+    }
+
+    protected function hasDICass($class)
+    {
+        return $this->getDi()->has($class);
     }
 
     protected function set($class, $definition = [], array $params = [], $replace = false)

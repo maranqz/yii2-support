@@ -6,7 +6,7 @@ use yii\web\View;
 use yii\widgets\ActiveForm;
 use yii\widgets\Pjax;
 
-/**
+/*
  * @var View $this
  * @var AbstractSendMessageInputForm $model
  * @var string $action

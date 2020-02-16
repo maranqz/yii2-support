@@ -12,6 +12,7 @@ class MessagesWidget extends Widget
     public $dataProvider;
 
     public $currentUser;
+    public $renderPath = '@SSupport/Module/Core/Resource/Widget/Messages/view/index';
 
     public function init()
     {
@@ -23,7 +24,7 @@ class MessagesWidget extends Widget
     public function run()
     {
         return $this->render(
-            '@SSupport/Module/Core/Resource/Widget/Messages/view/index',
+            $this->renderPath,
             [
                 'dataProvider' => $this->dataProvider,
                 'currentUser' => $this->currentUser,

@@ -7,7 +7,7 @@ use SSupport\Component\Referee\Entity\RefereeTicketInterface;
 
 interface NotifierInterface
 {
-    public function createMessageFromReferee(
+    public function sendMessageFromReferee(
         iterable $recipients,
         RefereeTicketInterface $ticket,
         MessageInterface $message

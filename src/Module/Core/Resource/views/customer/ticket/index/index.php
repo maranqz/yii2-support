@@ -5,8 +5,9 @@ use yii\helpers\Html;
 use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
-/* @var $searchModel SSupport\Module\Core\Entity\TicketSearch */
+/* @var $searchModel SSupport\Module\Core\UseCase\Customer\TicketSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+/* @var $gridViewConfig array */
 
 $this->title = Yii::t('ssupport', 'Tickets');
 $this->params['breadcrumbs'][] = $this->title;
@@ -21,20 +22,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <?= Html::a(Yii::t('ssupport', 'Create Ticket'), ['create'], ['class' => 'btn btn-success']); ?>
     </p>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
-            'subject',
-            'customer_id',
-            'assign_id',
-            'created_at',
-
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
+    <?= GridView::widget($gridViewConfig); ?>
     <?php Pjax::end(); ?>
 </div>

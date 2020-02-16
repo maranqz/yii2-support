@@ -22,11 +22,14 @@ use SSupport\Component\Core\Gateway\Uploader\AttachmentUpload;
 use SSupport\Component\Core\Gateway\Uploader\AttachmentUploadInterface;
 use SSupport\Component\Core\Gateway\Uploader\DefaultAttachmentPathGenerator;
 use SSupport\Component\Core\Gateway\Uploader\UploaderInterface;
+use SSupport\Component\Core\UseCase\Agent\SendMessage\SendMessage as AgentSendMessage;
+use SSupport\Component\Core\UseCase\Agent\SendMessage\SendMessageInputInterface as AgentSendMessageInputInterface;
+use SSupport\Component\Core\UseCase\Agent\SendMessage\SendMessageInterface as AgentSendMessageInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicket;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInterface;
-use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessage;
-use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
-use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
+use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessage as CustomerSendMessage;
+use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface as CustomerSendMessageInputInterface;
+use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface as CustomerSendMessageInterface;
 use SSupport\Module\Core\Entity\Attachment;
 use SSupport\Module\Core\Entity\Message;
 use SSupport\Module\Core\Entity\Ticket;
@@ -41,7 +44,12 @@ use SSupport\Module\Core\Gateway\Uploader\AttachmentUploadListener;
 use SSupport\Module\Core\Gateway\Uploader\Uploader;
 use SSupport\Module\Core\Gateway\Uploader\UploadFileConverterAttachment;
 use SSupport\Module\Core\Gateway\Uploader\UploadFileConverterAttachmentInterface;
-use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm;
+use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettings;
+use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettingsInterface;
+use SSupport\Module\Core\Resource\config\GridView\CustomerGridViewConfig;
+use SSupport\Module\Core\Resource\config\GridView\CustomerGridViewSettingsInterface;
+use SSupport\Module\Core\UseCase\Agent\SendMessageInputForm as AgentSendMessageInputForm;
+use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm as CustomerSendMessageInputForm;
 use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettings;
 use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettingsInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
@@ -128,7 +136,7 @@ class Bootstrap implements BootstrapInterface
         );
 
         $this->setSingleton(UrlAdapterInterface::class, LocalUrlAdapter::class, [
-            static::LOCAL_ATTACHMENTS_DIRECTORY,
+            $this->getModule()->attachmentWebPath,
         ]);
 
         $this->initUploader();
@@ -174,12 +182,14 @@ class Bootstrap implements BootstrapInterface
             4 => $this->make(FactoryInterface::class.'.Ticket'),
         ]);
 
-        $this->setSingleton(SendMessageInterface::class, SendMessage::class);
+        $this->setSingleton(CustomerSendMessageInterface::class, CustomerSendMessage::class);
+        $this->setSingleton(AgentSendMessageInterface::class, AgentSendMessage::class);
     }
 
     protected function initForm()
     {
-        $this->setSingleton(SendMessageInputInterface::class, SendMessageInputForm::class);
+        $this->setSingleton(CustomerSendMessageInputInterface::class, CustomerSendMessageInputForm::class);
+        $this->setSingleton(AgentSendMessageInputInterface::class, AgentSendMessageInputForm::class);
 
         $this->setSingleton(AttachmentUploadSettingsInterface::class, AttachmentUploadSettings::class, [
             [
@@ -208,7 +218,7 @@ class Bootstrap implements BootstrapInterface
     protected function initDefaultFilesystem()
     {
         if (!$this->getDi()->has(FilesystemInterface::class)) {
-            $path = Yii::getAlias('@webroot'.static::LOCAL_ATTACHMENTS_DIRECTORY);
+            $path = Yii::getAlias($this->getModule()->attachmentPath);
             FileHelper::createDirectory($path);
 
             $this->setSingleton(AdapterInterface::class, Local::class, [$path]);
@@ -245,6 +255,9 @@ class Bootstrap implements BootstrapInterface
     protected function initView(WebApplication $app)
     {
         $app->getModule(Module::$name)->setViewPath('@SSupport/Module/Core/Resource/views');
+
+        $this->set(AgentGridViewSettingsInterface::class, AgentGridViewSettings::class);
+        $this->set(CustomerGridViewSettingsInterface::class, CustomerGridViewConfig::class);
     }
 
     protected function initModule(Application $app)

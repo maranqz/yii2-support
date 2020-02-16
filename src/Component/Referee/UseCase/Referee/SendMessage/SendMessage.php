@@ -7,7 +7,7 @@ use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Factory\Message\CreateMessageInput;
 use SSupport\Component\Core\Factory\Message\MessageFactoryInterface;
 use SSupport\Component\Referee\Gateway\Notification\NotifierInterface;
-use SSupport\Component\Referee\Gateway\Repository\UserRepositoryInterface;
+use SSupport\Component\Referee\Gateway\Repository\RefereeUserRepositoryInterface;
 
 class SendMessage implements SendMessageInterface
 {
@@ -18,7 +18,7 @@ class SendMessage implements SendMessageInterface
 
     public function __construct(
         MessageFactoryInterface $messageFactory,
-        UserRepositoryInterface $userRepository,
+        RefereeUserRepositoryInterface $userRepository,
         NotifierInterface $notifier,
         EventDispatcherInterface $eventDispatcher
     ) {
@@ -40,9 +40,9 @@ class SendMessage implements SendMessageInterface
 
         $recipients = $this->userRepository->getRecipientsForTicketFromReferee($inputDTO->getTicket());
 
-        $this->notifier->createMessageFromReferee($recipients, $inputDTO->getTicket(), $message);
+        $this->notifier->sendMessageFromReferee($recipients, $inputDTO->getTicket(), $message);
 
-        $this->eventDispatcher->dispatch(new AfterSendMessage($message));
+        $this->eventDispatcher->dispatch(new AfterSendMessage($inputDTO, $message));
 
         return $message;
     }

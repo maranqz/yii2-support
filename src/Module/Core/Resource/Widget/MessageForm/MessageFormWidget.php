@@ -4,7 +4,6 @@ namespace SSupport\Module\Core\Resource\Widget\MessageForm;
 
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
-use SSupport\Module\Core\Controller\customer\ticket\MessageController;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use yii\base\Widget;
 
@@ -15,7 +14,7 @@ class MessageFormWidget extends Widget
     public $model;
     /** @var TicketInterface */
     public $ticket;
-    public $action = MessageController::PATH.'/send';
+    public $action;
     public $containerClass;
     public $formOptions = [
         'options' => [
@@ -23,25 +22,41 @@ class MessageFormWidget extends Widget
         ],
     ];
     public $pjaxOptions = [];
+    /** @var callable */
+    public $getAction;
+    public $renderPath = '@SSupport/Module/Core/Resource/Widget/MessageForm/view/index';
 
     public function init()
     {
         parent::init();
 
+        if (empty($this->action)) {
+            throw new \InvalidArgumentException('$action must be set');
+        }
+
         $this->model = $this->model ?? $this->make(SendMessageInputInterface::class);
+
+        if (empty($this->getAction)) {
+            $this->getAction = [$this, 'getActionDefault'];
+        }
     }
 
     public function run()
     {
         return $this->render(
-            '@SSupport/Module/Core/Resource/Widget/MessageForm/view/index',
+            $this->renderPath,
             [
                 'model' => $this->model,
-                'action' => [$this->action, 'ticket_id' => $this->ticket->getId()],
+                'action' => ($this->getAction)($this),
                 'containerClass' => $this->containerClass,
                 'formOptions' => $this->formOptions,
                 'pjaxOptions' => $this->pjaxOptions,
             ]
         );
+    }
+
+    protected function getActionDefault()
+    {
+        return [$this->action, 'ticketId' => $this->ticket->getId()];
     }
 }
