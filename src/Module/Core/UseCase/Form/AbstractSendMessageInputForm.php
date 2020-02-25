@@ -5,6 +5,7 @@ namespace SSupport\Module\Core\UseCase\Form;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use SSupport\Module\Core\Utils\ModelGetRulesTrait;
+use Yii;
 use yii\base\Model;
 
 abstract class AbstractSendMessageInputForm extends Model implements FileAcceptAwareInterface
@@ -27,6 +28,14 @@ abstract class AbstractSendMessageInputForm extends Model implements FileAcceptA
                 [['files'], 'file', 'maxFiles' => '5', 'mimeTypes' => $this->filesMimeTypes],
             ]
         );
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'text' => Yii::t('ssupport_core', 'Text'),
+            'files' => Yii::t('ssupport_core', 'Files'),
+        ];
     }
 
     public function getTicket_id()

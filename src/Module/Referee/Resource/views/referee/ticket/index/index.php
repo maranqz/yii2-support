@@ -9,7 +9,7 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 /* @var $gridViewConfig array */
 
-$this->title = Yii::t('ssupport', 'Tickets');
+$this->title = Yii::t('ssupport_core', 'Tickets');
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="ticket-index">

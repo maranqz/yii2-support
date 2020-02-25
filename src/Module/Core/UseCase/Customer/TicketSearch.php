@@ -50,7 +50,7 @@ class TicketSearch extends Model
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['attributes' => ['id', 'created_at']],
+            'sort' => ['defaultOrder' => ['updated_at' => SORT_DESC]],
         ]);
 
         $this->load($params);

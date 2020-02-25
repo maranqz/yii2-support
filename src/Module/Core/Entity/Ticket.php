@@ -3,6 +3,9 @@
 namespace SSupport\Module\Core\Entity;
 
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
+use paulzi\jsonBehavior\JsonBehavior;
+use paulzi\jsonBehavior\JsonField;
+use paulzi\jsonBehavior\JsonValidator;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Entity\UserInterface;
@@ -16,6 +19,9 @@ use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
 
+/**
+ * @property JsonField $readers
+ */
 class Ticket extends ActiveRecord implements TicketInterface
 {
     use ContainerAwareTrait;
@@ -36,6 +42,10 @@ class Ticket extends ActiveRecord implements TicketInterface
             [
                 'class' => SaveRelationsBehavior::class,
                 'relations' => ['relatedMessages', 'relatedAssign', 'relatedCustomer'],
+            ],
+            [
+                'class' => JsonBehavior::class,
+                'attributes' => ['readers'],
             ],
         ];
     }
@@ -60,18 +70,19 @@ class Ticket extends ActiveRecord implements TicketInterface
                 'targetClass' => $this->getDIClass(UserInterface::class),
                 'targetAttribute' => ['customer_id' => 'id'],
             ],
+            [['readers'], JsonValidator::class],
         ];
     }
 
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('ssupport', 'ID'),
-            'subject' => Yii::t('ssupport', 'Subject'),
-            'customer_id' => Yii::t('ssupport', 'Customer ID'),
-            'assign_id' => Yii::t('ssupport', 'Assign ID'),
-            'created_at' => Yii::t('ssupport', 'Created At'),
-            'updated_at' => Yii::t('ssupport', 'Updated At'),
+            'id' => Yii::t('ssupport_core', 'ID'),
+            'subject' => Yii::t('ssupport_core', 'Subject'),
+            'customer_id' => Yii::t('ssupport_core', 'Customer ID'),
+            'assign_id' => Yii::t('ssupport_core', 'Assign ID'),
+            'created_at' => Yii::t('ssupport_core', 'Created At'),
+            'updated_at' => Yii::t('ssupport_core', 'Updated At'),
         ];
     }
 
@@ -132,8 +143,6 @@ class Ticket extends ActiveRecord implements TicketInterface
 
     public function getCustomer(): UserInterface
     {
-        $a = 1;
-
         return $this->__get('relatedCustomer');
     }
 
@@ -152,5 +161,22 @@ class Ticket extends ActiveRecord implements TicketInterface
     protected function getRelatedCustomer()
     {
         return $this->hasOne($this->getDIClass(UserInterface::class), ['id' => 'customer_id']);
+    }
+
+    public function addReader(UserInterface $reader)
+    {
+        $this->readers[$reader->getId()] = 1;
+
+        return $this;
+    }
+
+    public function isReader(UserInterface $reader)
+    {
+        return isset($this->readers[$reader->getId()]);
+    }
+
+    public function clearReaders()
+    {
+        $this->readers->set('{}');
     }
 }

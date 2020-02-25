@@ -14,20 +14,20 @@ class AgentGridViewSettings extends AbstractGridViewSettings implements AgentGri
             'headerOptions' => [
                 'class' => 'cell_customer',
             ],
-            'label' => Yii::t('ssupport', 'Customer'),
+            'label' => Yii::t('ssupport_core', 'Customer'),
             'value' => 'customer.nickname',
         ];
     }
 
-    public function createdAt()
+    public function updatedAt()
     {
         return [
             'headerOptions' => [
-                'class' => 'cell_created_at',
+                'class' => 'cell_updated_at',
             ],
             'filter' => DateRangePicker::widget([
                 'model' => $this->searchModel(),
-                'attribute' => 'createAtRange',
+                'attribute' => 'updatedAtRange',
                 'convertFormat' => true,
                 'pluginOptions' => [
                     'locale' => [
@@ -38,7 +38,7 @@ class AgentGridViewSettings extends AbstractGridViewSettings implements AgentGri
                     'timePickerIncrement' => 15,
                 ],
             ]),
-            'attribute' => 'created_at',
+            'attribute' => 'updated_at',
             'format' => 'datetime',
         ];
     }

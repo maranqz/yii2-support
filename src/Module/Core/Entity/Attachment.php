@@ -39,11 +39,11 @@ class Attachment extends ActiveRecord implements AttachmentInterface
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('yii2-support', 'ID'),
-            'message_id' => Yii::t('yii2-support', 'Message ID'),
-            'path' => Yii::t('yii2-support', 'Path'),
-            'name' => Yii::t('yii2-support', 'Name'),
-            'size' => Yii::t('yii2-support', 'Size'),
+            'id' => Yii::t('ssupport_core', 'ID'),
+            'message_id' => Yii::t('ssupport_core', 'Message ID'),
+            'path' => Yii::t('ssupport_core', 'Path'),
+            'name' => Yii::t('ssupport_core', 'Name'),
+            'size' => Yii::t('ssupport_core', 'Size'),
         ];
     }
 

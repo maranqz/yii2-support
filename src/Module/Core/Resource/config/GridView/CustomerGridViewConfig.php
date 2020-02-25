@@ -12,18 +12,18 @@ class CustomerGridViewConfig extends AbstractGridViewSettings implements Custome
             'headerOptions' => [
                 'class' => 'cell_assign',
             ],
-            'label' => Yii::t('ssupport', 'Assign'),
+            'label' => Yii::t('ssupport_core', 'Assign'),
             'value' => 'assigns.0.nickname',
         ];
     }
 
-    public function createdAt()
+    public function updatedAt()
     {
         return [
             'headerOptions' => [
-                'class' => 'cell_created_at',
+                'class' => 'cell_updated_at',
             ],
-            'attribute' => 'created_at',
+            'attribute' => 'updated_at',
             'format' => 'datetime',
         ];
     }

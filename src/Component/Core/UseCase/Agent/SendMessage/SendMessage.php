@@ -6,7 +6,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Factory\Message\CreateMessageInput;
 use SSupport\Component\Core\Factory\Message\MessageFactoryInterface;
-use SSupport\Component\Core\Gateway\Notification\NotifierInterface;
+use SSupport\Component\Core\Gateway\Notification\NotifierListenerInterface;
 use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
 use SSupport\Component\Core\Gateway\Repository\User\UserRepositoryInterface;
 
@@ -22,7 +22,7 @@ class SendMessage implements SendMessageInterface
         TicketRepositoryInterface $ticketRepository,
         MessageFactoryInterface $messageFactory,
         UserRepositoryInterface $userRepository,
-        NotifierInterface $notifier,
+        NotifierListenerInterface $notifier,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->ticketRepository = $ticketRepository;
@@ -44,10 +44,6 @@ class SendMessage implements SendMessageInterface
         $inputDTO->getTicket()->addMessage($message);
 
         $this->ticketRepository->save($inputDTO->getTicket());
-
-        $recipients = $this->userRepository->getRecipientsForTicketFromAgent($inputDTO->getTicket());
-
-        $this->notifier->sendMessageFromAgent($recipients, $inputDTO->getTicket(), $message);
 
         $this->eventDispatcher->dispatch(new AfterSendMessage($inputDTO, $message));
 

@@ -14,18 +14,18 @@ class TicketSearch extends Ticket
 {
     use ContainerAwareTrait;
 
-    public $createAtRange;
-    public $createTimeStart;
-    public $createTimeEnd;
+    public $updatedAtRange;
+    public $updatedTimeStart;
+    public $updatedTimeEnd;
 
     public function behaviors()
     {
         return [
             [
                 'class' => DateRangeBehavior::class,
-                'attribute' => 'createAtRange',
-                'dateStartAttribute' => 'createTimeStart',
-                'dateEndAttribute' => 'createTimeEnd',
+                'attribute' => 'updatedAtRange',
+                'dateStartAttribute' => 'updatedTimeStart',
+                'dateEndAttribute' => 'updatedTimeEnd',
             ],
         ];
     }
@@ -37,7 +37,7 @@ class TicketSearch extends Ticket
     {
         return [
             [['id'], 'integer'],
-            [['createAtRange'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
+            [['updatedAtRange'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
             [['subject'], 'safe'],
         ];
     }
@@ -68,7 +68,7 @@ class TicketSearch extends Ticket
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['created_at' => SORT_DESC]],
+            'sort' => ['defaultOrder' => ['updated_at' => SORT_DESC]],
         ]);
 
         $this->load($params);
@@ -87,7 +87,7 @@ class TicketSearch extends Ticket
         ]);
 
         $query->andFilterWhere(['like', 'subject', $this->subject])
-            ->andFilterWhere(['between', 'created_at', $this->createTimeStart, $this->createTimeEnd]);
+            ->andFilterWhere(['between', 'updated_at', $this->updatedTimeStart, $this->updatedTimeEnd]);
 
         return $dataProvider;
     }

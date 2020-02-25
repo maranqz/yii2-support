@@ -7,8 +7,8 @@ use yii\widgets\ActiveForm;
 /* @var $this yii\web\View */
 /* @var $model CreateTicketForm */
 
-$this->title = Yii::t('ssupport', 'Create Ticket');
-$this->params['breadcrumbs'][] = ['label' => Yii::t('ssupport', 'Tickets'), 'url' => ['index']];
+$this->title = Yii::t('ssupport_core', 'Create Ticket');
+$this->params['breadcrumbs'][] = ['label' => Yii::t('ssupport_core', 'Tickets'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="ticket-create">
@@ -29,7 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         ]); ?>
 
         <div class="form-group">
-            <?= Html::submitButton(Yii::t('ssupport', 'Save'), ['class' => 'btn btn-success']); ?>
+            <?= Html::submitButton(Yii::t('ssupport_core', 'Save'), ['class' => 'btn btn-success']); ?>
         </div>
 
         <?php ActiveForm::end(); ?>

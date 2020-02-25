@@ -8,7 +8,7 @@ interface CommonGridViewSettingsInterface
 
     public function subject();
 
-    public function createdAt();
+    public function updatedAt();
 
     public function actionColumn();
 

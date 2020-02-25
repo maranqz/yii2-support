@@ -8,23 +8,24 @@ use SSupport\Module\Core\Entity\Ticket;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
+use yii\db\ActiveQuery;
 
 class TicketSearch extends Ticket
 {
     use ContainerAwareTrait;
 
-    public $createAtRange;
-    public $createTimeStart;
-    public $createTimeEnd;
+    public $updatedAtRange;
+    public $updatedTimeStart;
+    public $updatedTimeEnd;
 
     public function behaviors()
     {
         return [
             [
                 'class' => DateRangeBehavior::class,
-                'attribute' => 'createAtRange',
-                'dateStartAttribute' => 'createTimeStart',
-                'dateEndAttribute' => 'createTimeEnd',
+                'attribute' => 'updatedAtRange',
+                'dateStartAttribute' => 'updatedTimeStart',
+                'dateEndAttribute' => 'updatedTimeStart',
             ],
         ];
     }
@@ -36,7 +37,7 @@ class TicketSearch extends Ticket
     {
         return [
             [['id'], 'integer'],
-            [['createAtRange'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
+            [['updatedAtRange'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
             [['subject'], 'safe'],
         ];
     }
@@ -60,12 +61,14 @@ class TicketSearch extends Ticket
      */
     public function search($assignId, $params)
     {
+        /** @var ActiveQuery $query */
         $query = $this->make(TicketInterface::class)::find()->andWhere(['assign_id' => $assignId]);
 
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'sort' => ['defaultOrder' => ['updated_at' => SORT_DESC]],
         ]);
 
         $this->load($params);
@@ -83,7 +86,7 @@ class TicketSearch extends Ticket
         ]);
 
         $query->andFilterWhere(['like', 'subject', $this->subject])
-            ->andFilterWhere(['between', 'created_at', $this->createTimeStart, $this->createTimeEnd]);
+            ->andFilterWhere(['between', 'updated_at', $this->updatedTimeStart, $this->updatedTimeEnd]);
 
         return $dataProvider;
     }

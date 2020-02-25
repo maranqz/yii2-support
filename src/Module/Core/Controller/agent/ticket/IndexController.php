@@ -3,6 +3,7 @@
 namespace SSupport\Module\Core\Controller\agent\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
 use SSupport\Module\Core\Module;
 use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettingsInterface;
 use SSupport\Module\Core\UseCase\Agent\TicketSearch;
@@ -20,6 +21,15 @@ class IndexController extends Controller
     use CoreModuleAwareTrait;
 
     const PATH = 'agent/ticket/index';
+
+    protected $highlighter;
+
+    public function __construct($id, $module, HighlighterInterface $highlighter, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+
+        $this->highlighter = $highlighter;
+    }
 
     public function behaviors()
     {
@@ -56,6 +66,9 @@ class IndexController extends Controller
     public function actionView($ticketId)
     {
         $ticket = $this->findModel($ticketId);
+
+        $this->highlighter->removeHighlight($ticket, Yii::$app->user->getIdentity());
+
         $messagesProvider = new ActiveDataProvider([
             'query' => $ticket->getRelatedMessages(),
             'sort' => [
@@ -78,6 +91,6 @@ class IndexController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('ssupport', 'The requested page does not exist.'));
+        throw new NotFoundHttpException();
     }
 }

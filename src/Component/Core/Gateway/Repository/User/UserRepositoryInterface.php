@@ -9,14 +9,14 @@ use SSupport\Component\Core\Gateway\Repository\RepositoryInterface;
 interface UserRepositoryInterface extends RepositoryInterface
 {
     /** @return UserInterface[] */
-    public function getAssignAgentsNewTicket(TicketInterface $ticket): iterable;
+    public function getDefaultAgentsForTicket(TicketInterface $ticket): iterable;
 
     /** @return UserInterface[] */
-    public function getNoticeAgentsNewTicket(TicketInterface $ticket): iterable;
+    public function getRecipientsForNewTicket(TicketInterface $ticket): iterable;
 
     /** @return UserInterface[] */
-    public function getRecipientsForTicketFromCustomer(TicketInterface $ticket): iterable;
+    public function getRecipientsFromCustomer(TicketInterface $ticket): iterable;
 
     /** @return UserInterface[] */
-    public function getRecipientsForTicketFromAgent(TicketInterface $ticket): iterable;
+    public function getRecipientsFromAgent(TicketInterface $ticket): iterable;
 }

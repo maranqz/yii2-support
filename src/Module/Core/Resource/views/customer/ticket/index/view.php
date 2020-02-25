@@ -4,10 +4,8 @@ use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessage;
 use SSupport\Module\Core\Controller\customer\ticket\MessageController;
 use SSupport\Module\Core\Resource\Widget\MessageForm\MessageFormWidget;
 use SSupport\Module\Core\Resource\Widget\Messages\MessagesWidget;
-use SSupport\Module\Referee\Resource\Widget\RequestReferee\RequestRefereeWidget;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Html;
-use yii\web\YiiAsset;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
@@ -17,28 +15,29 @@ use yii\widgets\DetailView;
 /* @var $detailView array */
 
 $this->title = $ticket->getSubject();
-$this->params['breadcrumbs'][] = ['label' => Yii::t('ssupport', 'Tickets'), 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => Yii::t('ssupport_core', 'Tickets'), 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-
-YiiAsset::register($this);
+yii\web\YiiAsset::register($this);
 ?>
 <div class="ticket-view">
 
     <h1><?= Html::encode($this->title); ?></h1>
 
-    <?= RequestRefereeWidget::widget(['ticketId' => $ticket->getId(), 'hasRequested' => $ticket->hasReferee()]); ?>
+    <div class="col-sm-8">
+        <?= MessageFormWidget::widget([
+            'ticket' => $ticket,
+            'pjaxOptions' => [
+                'enablePushState' => false,
+            ],
+            'action' => MessageController::PATH.'/send',
+        ]); ?>
 
-    <?= DetailView::widget($detailView); ?>
+        <?= MessagesWidget::widget([
+            'dataProvider' => $messagesProvider,
+        ]); ?>
+    </div>
 
-    <?= MessageFormWidget::widget([
-        'ticket' => $ticket,
-        'pjaxOptions' => [
-            'enablePushState' => false,
-        ],
-        'action' => MessageController::PATH.'/send',
-    ]); ?>
-
-    <?= MessagesWidget::widget([
-        'dataProvider' => $messagesProvider,
-    ]); ?>
+    <div class="col-sm-4">
+        <?= DetailView::widget($detailView); ?>
+    </div>
 </div>

@@ -78,6 +78,6 @@ class MessageController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('ssupport', 'The requested page does not exist.'));
+        throw new NotFoundHttpException();
     }
 }

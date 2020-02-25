@@ -1,10 +1,10 @@
 <?php
 
-namespace SSupport\Module\Referee\Gateway\Repository;
+namespace SSupport\Module\Referee\Gateway\Repository\User;
 
 use SSupport\Component\Referee\Entity\RefereeInterface;
 use SSupport\Component\Referee\Entity\RefereeTicketInterface;
-use SSupport\Component\Referee\Gateway\Repository\GetRefereeForTicketInterface;
+use SSupport\Component\Referee\Gateway\Repository\User\GetRefereeForTicketInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use SSupport\Module\Referee\Module;
 use Yii;

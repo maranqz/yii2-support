@@ -7,7 +7,7 @@ use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Factory\FactoryInterface;
 use SSupport\Component\Core\Factory\Message\CreateMessageInput;
 use SSupport\Component\Core\Factory\Message\MessageFactoryInterface;
-use SSupport\Component\Core\Gateway\Notification\NotifierInterface;
+use SSupport\Component\Core\Gateway\Notification\NotifierListenerInterface;
 use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
 use SSupport\Component\Core\Gateway\Repository\User\UserRepositoryInterface;
 
@@ -24,7 +24,7 @@ class CreateTicket implements CreateTicketInterface
         TicketRepositoryInterface $ticketRepository,
         UserRepositoryInterface $userRepository,
         MessageFactoryInterface $messageFactory,
-        NotifierInterface $notifier,
+        NotifierListenerInterface $notifier,
         FactoryInterface $ticketFactory,
         EventDispatcherInterface $eventDispatcher
     ) {
@@ -44,7 +44,7 @@ class CreateTicket implements CreateTicketInterface
         $ticket->setSubject($ticketInput->getSubject())
             ->setCustomer($ticketInput->getCustomer());
 
-        foreach ($this->userRepository->getAssignAgentsNewTicket($ticket) as $agent) {
+        foreach ($this->userRepository->getDefaultAgentsForTicket($ticket) as $agent) {
             $ticket->assign($agent);
         }
 
@@ -56,9 +56,6 @@ class CreateTicket implements CreateTicketInterface
         $ticket->addMessage($message);
 
         $this->ticketRepository->save($ticket);
-
-        $noticeAgents = $this->userRepository->getNoticeAgentsNewTicket($ticket);
-        $this->notifier->sendTicket($noticeAgents, $ticket, $message);
 
         $this->eventDispatcher->dispatch(new AfterCreateTicket($ticketInput, $ticket));
 

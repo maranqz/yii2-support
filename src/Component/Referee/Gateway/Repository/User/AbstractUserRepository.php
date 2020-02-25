@@ -1,11 +1,11 @@
 <?php
 
-namespace SSupport\Component\Referee\Gateway\Repository;
+namespace SSupport\Component\Referee\Gateway\Repository\User;
 
 use SSupport\Component\Referee\Entity\RefereeInterface;
 use SSupport\Component\Referee\Entity\RefereeTicketInterface;
 
-abstract class AbstractRefereeUserRepository implements RefereeUserRepositoryInterface
+abstract class AbstractUserRepository implements UserRepositoryInterface
 {
     /** @var GetRefereeForTicketInterface */
     protected $getRefereeForTicket;

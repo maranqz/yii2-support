@@ -68,11 +68,11 @@ class Message extends ActiveRecord implements MessageInterface
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('ssupport', 'ID'),
-            'ticket_id' => Yii::t('ssupport', 'Ticket ID'),
-            'sender_id' => Yii::t('ssupport', 'Sender ID'),
-            'text' => Yii::t('ssupport', 'Text'),
-            'created_at' => Yii::t('ssupport', 'Created At'),
+            'id' => Yii::t('ssupport_core', 'ID'),
+            'ticket_id' => Yii::t('ssupport_core', 'Ticket ID'),
+            'sender_id' => Yii::t('ssupport_core', 'Sender ID'),
+            'text' => Yii::t('ssupport_core', 'Text'),
+            'created_at' => Yii::t('ssupport_core', 'Created At'),
         ];
     }
 

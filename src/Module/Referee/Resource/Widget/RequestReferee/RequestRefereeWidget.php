@@ -37,7 +37,7 @@ class RequestRefereeWidget extends Widget
         parent::init();
 
         if (empty($this->text)) {
-            $this->text = Yii::t('ssupport', 'Request referee');
+            $this->text = Yii::t('ssupport_referee', 'Request referee');
         }
 
         if (empty($this->url)) {

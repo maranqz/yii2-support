@@ -6,8 +6,8 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Factory\Message\CreateMessageInput;
 use SSupport\Component\Core\Factory\Message\MessageFactoryInterface;
-use SSupport\Component\Referee\Gateway\Notification\NotifierInterface;
-use SSupport\Component\Referee\Gateway\Repository\RefereeUserRepositoryInterface;
+use SSupport\Component\Referee\Gateway\Notification\NotifierListenerInterface;
+use SSupport\Component\Referee\Gateway\Repository\User\UserRepositoryInterface;
 
 class SendMessage implements SendMessageInterface
 {
@@ -18,8 +18,8 @@ class SendMessage implements SendMessageInterface
 
     public function __construct(
         MessageFactoryInterface $messageFactory,
-        RefereeUserRepositoryInterface $userRepository,
-        NotifierInterface $notifier,
+        UserRepositoryInterface $userRepository,
+        NotifierListenerInterface $notifier,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->messageFactory = $messageFactory;

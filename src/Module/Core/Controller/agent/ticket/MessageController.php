@@ -2,9 +2,9 @@
 
 namespace SSupport\Module\Core\Controller\agent\ticket;
 
+use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
-use SSupport\Module\Core\Entity\Ticket;
 use SSupport\Module\Core\Module;
 use SSupport\Module\Core\Resource\Widget\MessageForm\MessageFormWidget;
 use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm;
@@ -63,10 +63,10 @@ class MessageController extends Controller
 
     protected function findModel($id)
     {
-        if (null !== ($model = Ticket::findOne($id))) {
+        if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('ssupport', 'The requested page does not exist.'));
+        throw new NotFoundHttpException();
     }
 }

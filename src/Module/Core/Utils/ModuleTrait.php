@@ -1,6 +1,6 @@
 <?php
 
-namespace SSupport\Module\Core;
+namespace SSupport\Module\Core\Utils;
 
 trait ModuleTrait
 {

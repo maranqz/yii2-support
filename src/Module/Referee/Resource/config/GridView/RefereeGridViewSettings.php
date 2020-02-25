@@ -40,8 +40,8 @@ class RefereeGridViewSettings extends AbstractGridViewSettings implements Refere
         return $this->agentSettings->customer();
     }
 
-    public function createdAt()
+    public function updatedAt()
     {
-        return $this->customerSettings->createdAt();
+        return $this->agentSettings->updatedAt();
     }
 }

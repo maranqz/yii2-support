@@ -4,6 +4,8 @@ namespace SSupport\Module\Core\Controller\customer\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInterface;
+use SSupport\Module\Core\Entity\Ticket;
+use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
 use SSupport\Module\Core\Gateway\Repository\GetTicketByIdTrait;
 use SSupport\Module\Core\Module;
 use SSupport\Module\Core\RBAC\IsOwnerCustomerRule;
@@ -25,6 +27,15 @@ class IndexController extends Controller
     use GetTicketByIdTrait;
 
     const PATH = 'customer/ticket/index';
+
+    protected $highlighter;
+
+    public function __construct($id, $module, HighlighterInterface $highlighter, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+
+        $this->highlighter = $highlighter;
+    }
 
     public function behaviors()
     {
@@ -72,6 +83,9 @@ class IndexController extends Controller
     public function actionView($ticketId)
     {
         $ticket = $this->findModel($ticketId);
+
+        $this->highlighter->removeHighlight($ticket, Yii::$app->user->getIdentity());
+
         $messagesProvider = new ActiveDataProvider([
             'query' => $ticket->getRelatedMessages(),
             'sort' => [
@@ -111,10 +125,11 @@ class IndexController extends Controller
 
     protected function findModel($id)
     {
+        /** @var TicketInterface|Ticket $model */
         if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('ssupport', 'The requested page does not exist.'));
+        throw new NotFoundHttpException();
     }
 }

@@ -2,14 +2,15 @@
 
 namespace SSupport\Module\Core;
 
-use kartik\daterange\DateRangePicker;
 use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\Gateway\Notification\NotifierListenerInterface;
 use SSupport\Component\Core\UseCase\Agent\SendMessage\AfterSendMessage as AgentAfterSendMessage;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\AfterCreateTicket;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\AfterSendMessage as CustomerAfterSendMessage;
-use SSupport\Module\Core\Resource\Assets\CommonAsset\CommonAsset;
+use SSupport\Module\Core\Entity\Ticket;
 use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettingsInterface;
 use SSupport\Module\Core\Resource\config\GridView\CustomerGridViewSettingsInterface;
+use SSupport\Module\Core\Utils\ModuleTrait;
 use Yii;
 use yii\base\Module as BaseModule;
 use yii\helpers\Url;
@@ -40,10 +41,18 @@ class Module extends BaseModule
 
     public $controllerNamespace = 'SSupport\Module\Core\Controller';
 
+    public $emailFrom;
+
     public $uploaderListenerEvents = [
         AfterCreateTicket::class,
         CustomerAfterSendMessage::class,
         AgentAfterSendMessage::class,
+    ];
+
+    public $listeners = [
+        AfterCreateTicket::class => [NotifierListenerInterface::class, 'newTicket'],
+        AgentAfterSendMessage::class => [NotifierListenerInterface::class, 'sendMessageFromAgent'],
+        CustomerAfterSendMessage::class => [NotifierListenerInterface::class, 'sendMessageFromCustomer'],
     ];
 
     /** @var string|array */
@@ -74,11 +83,11 @@ class Module extends BaseModule
             'model' => $ticket,
             'attributes' => [
                 'nickname' => [
-                    'label' => Yii::t('ssupport', 'Nickname'),
+                    'label' => Yii::t('ssupport_core', 'Nickname'),
                     'value' => $ticket->getCustomer()->getNickname(),
                 ],
                 'assign' => [
-                    'label' => Yii::t('ssupport', 'Assign'),
+                    'label' => Yii::t('ssupport_core', 'Assign'),
                     'value' => $ticket->getAssigns()[0]->getNickname(),
                 ],
                 'created_at' => 'created_at:datetime',
@@ -105,11 +114,12 @@ class Module extends BaseModule
         return [
             'dataProvider' => $config->dataProvider(),
             'filterModel' => $config->searchModel(),
+            'rowOptions' => \Closure::fromCallable([self::class, 'defaultRowOptions']),
             'columns' => [
                 'id' => $config->id(),
                 'subject' => $config->subject(),
                 'customer' => $config->customer(),
-                'created_at' => $config->createdAt(),
+                'updated_at' => $config->updatedAt(),
                 'action_column' => $config->actionColumn(),
             ],
         ];
@@ -119,101 +129,32 @@ class Module extends BaseModule
 
     public static function getCustomerGridViewConfigDefault(CustomerGridViewSettingsInterface $config)
     {
+        $a = 1;
+
         return [
             'dataProvider' => $config->dataProvider(),
             'filterModel' => $config->searchModel(),
+            'rowOptions' => \Closure::fromCallable([self::class, 'defaultRowOptions']),
             'columns' => [
                 'id' => $config->id(),
                 'subject' => $config->subject(),
                 'assign' => $config->assign(),
-                'created_at' => $config->createdAt(),
+                'updated_at' => $config->updatedAt(),
                 'action_column' => $config->actionColumn(),
             ],
         ];
     }
 
-    public function init()
+    public static function defaultRowOptions($ticket)
     {
-        parent::init();
+        /** @var Ticket $ticket */
+        $class = '';
+        if (!$ticket->isReader(Yii::$app->getUser()->getIdentity())) {
+            $class = 'info';
+        }
 
-        CommonAsset::register(Yii::$app->view);
-    }
-
-    public static function gridId()
-    {
         return [
-            'attribute' => 'id',
-            'headerOptions' => [
-                'class' => 'cell_id',
-            ],
-            'filterOptions' => [
-                'class' => 'cell_id',
-            ],
-            'contentOptions' => [
-                'class' => 'cell_id',
-            ],
-        ];
-    }
-
-    public static function gridSubject()
-    {
-        return [
-            'attribute' => 'subject',
-            'headerOptions' => [
-                'class' => 'text-truncate cell_subject',
-            ],
-            'filterOptions' => [
-                'class' => 'text-truncate cell_subject',
-            ],
-            'contentOptions' => [
-                'class' => 'text-truncate cell_subject',
-            ],
-        ];
-    }
-
-    public static function gridAssign()
-    {
-        return [
-            'headerOptions' => [
-                'class' => 'cell_assign',
-            ],
-            'label' => Yii::t('ssupport', 'Assign'),
-            'value' => 'assigns.0.nickname',
-        ];
-    }
-
-    public static function gridCustomer()
-    {
-        return [
-            'headerOptions' => [
-                'class' => 'cell_customer',
-            ],
-            'label' => Yii::t('ssupport', 'Customer'),
-            'value' => 'customer.nickname',
-        ];
-    }
-
-    public static function gridCreatedAt($searchModel)
-    {
-        return [
-            'headerOptions' => [
-                'class' => 'cell_created_at',
-            ],
-            'filter' => DateRangePicker::widget([
-                'model' => $searchModel,
-                'attribute' => 'createAtRange',
-                'convertFormat' => true,
-                'pluginOptions' => [
-                    'locale' => [
-                        'format' => 'd.m.Y H:i', //DD.MM.YYYY
-                    ],
-                    'timePicker' => true,
-                    'timePicker24Hour' => true,
-                    'timePickerIncrement' => 15,
-                ],
-            ]),
-            'attribute' => 'created_at',
-            'format' => 'datetime',
+            'class' => $class,
         ];
     }
 }

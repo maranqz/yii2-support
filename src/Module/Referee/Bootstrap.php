@@ -4,23 +4,29 @@ namespace SSupport\Module\Referee;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SSupport\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Gateway\Repository\User\GetRecipientsFromAgentInterface;
+use SSupport\Component\Core\Gateway\Repository\User\GetRecipientsFromCustomerInterface;
 use SSupport\Component\Referee\Entity\RefereeInterface;
-use SSupport\Component\Referee\Gateway\Notification\NotifierInterface;
-use SSupport\Component\Referee\Gateway\Repository\GetRefereeForTicketInterface;
-use SSupport\Component\Referee\Gateway\Repository\RefereeUserRepositoryInterface;
+use SSupport\Component\Referee\Gateway\Notification\NotifierListenerInterface;
+use SSupport\Component\Referee\Gateway\Repository\User\GetRefereeForTicketInterface;
+use SSupport\Component\Referee\Gateway\Repository\User\UserRepositoryInterface;
 use SSupport\Component\Referee\UseCase\Customer\RequestReferee\RequestReferee;
 use SSupport\Component\Referee\UseCase\Customer\RequestReferee\RequestRefereeInputInterface;
 use SSupport\Component\Referee\UseCase\Customer\RequestReferee\RequestRefereeInterface;
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\SendMessage;
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\SendMessageInterface;
+use SSupport\Module\Core\Gateway\Notification\NotifierListener as CoreRefereeNotifierListener;
 use SSupport\Module\Core\Gateway\Uploader\AttachmentUploadListener;
 use SSupport\Module\Core\Module as CoreModule;
 use SSupport\Module\Core\Resource\Widget\Messages\Widget\HeaderWidget as CoreHeaderWidget;
+use SSupport\Module\Core\Utils\BootstrapTrait;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
-use SSupport\Module\Referee\Gateway\Notification\Notifier;
-use SSupport\Module\Referee\Gateway\Repository\RefereeUserRepository;
-use SSupport\Module\Referee\Gateway\Repository\SimpleGetRefereeForTicket;
+use SSupport\Module\Referee\Gateway\Notification\NotifierListener as RefereeNotifierListener;
+use SSupport\Module\Referee\Gateway\Repository\User\GetRecipientsFromAgent;
+use SSupport\Module\Referee\Gateway\Repository\User\GetRecipientsFromCustomer;
+use SSupport\Module\Referee\Gateway\Repository\User\SimpleGetRefereeForTicket;
+use SSupport\Module\Referee\Gateway\Repository\User\UserRepository;
 use SSupport\Module\Referee\Resource\config\GridView\RefereeGridViewSettings;
 use SSupport\Module\Referee\Resource\config\GridView\RefereeGridViewSettingsInterface;
 use SSupport\Module\Referee\Resource\Widget\Messages\Widget\HeaderWidget as RefereeHeaderWidget;
@@ -38,6 +44,7 @@ use yii\web\GroupUrlRule;
 class Bootstrap implements BootstrapInterface
 {
     use ContainerAwareTrait;
+    use BootstrapTrait;
 
     /** @var CoreModule */
     protected $coreModule;
@@ -56,6 +63,7 @@ class Bootstrap implements BootstrapInterface
         $this->initEntity();
         $this->initGateway();
         $this->initUseCase();
+        $this->initListeners();
         $this->initTranslations($app);
 
         if ($app instanceof WebApplication) {
@@ -70,9 +78,43 @@ class Bootstrap implements BootstrapInterface
 
     protected function initGateway()
     {
-        $this->setSingleton(NotifierInterface::class, Notifier::class);
+        $this->initRepository();
+        $this->initNotifier();
+
         $this->setSingleton(GetRefereeForTicketInterface::class, SimpleGetRefereeForTicket::class);
-        $this->setSingleton(RefereeUserRepositoryInterface::class, RefereeUserRepository::class);
+        $this->setSingleton(UserRepositoryInterface::class, UserRepository::class);
+    }
+
+    protected function initRepository()
+    {
+        $this->setSingleton(
+            GetRecipientsFromCustomerInterface::class,
+            GetRecipientsFromCustomer::class,
+            [],
+            true
+        );
+        $this->setSingleton(
+            GetRecipientsFromAgentInterface::class,
+            GetRecipientsFromAgent::class,
+            [],
+            true
+        );
+    }
+
+    protected function initNotifier()
+    {
+        $this->setSingleton(NotifierListenerInterface::class, RefereeNotifierListener::class, [
+            3 => $this->getCoreModule()->emailFrom,
+        ]);
+
+        Yii::setAlias(
+            RefereeNotifierListener::DEFAULT_PATH.'sendMessageFromAgent',
+            CoreRefereeNotifierListener::DEFAULT_PATH.'sendMessageFromAgent'
+        );
+        Yii::setAlias(
+            RefereeNotifierListener::DEFAULT_PATH.'sendMessageFromCustomer',
+            CoreRefereeNotifierListener::DEFAULT_PATH.'sendMessageFromCustomer'
+        );
     }
 
     protected function initUploader()
@@ -108,8 +150,8 @@ class Bootstrap implements BootstrapInterface
 
     protected function initTranslations(Application $app)
     {
-        if (!isset($app->get('i18n')->translations['ssupport*'])) {
-            $app->get('i18n')->translations['ssupport*'] = [
+        if (!isset($app->get('i18n')->translations['ssupport_referee*'])) {
+            $app->get('i18n')->translations['ssupport_referee*'] = [
                 'class' => PhpMessageSource::class,
                 'basePath' => __DIR__.'/Resource/i18n',
                 'sourceLanguage' => 'en-US',

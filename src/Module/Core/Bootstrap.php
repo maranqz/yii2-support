@@ -13,9 +13,12 @@ use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Entity\UserInterface;
 use SSupport\Component\Core\Factory\FactoryInterface;
 use SSupport\Component\Core\Factory\Message\MessageFactoryInterface;
-use SSupport\Component\Core\Gateway\Notification\NotifierInterface;
+use SSupport\Component\Core\Gateway\Notification\NotifierListenerInterface;
 use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
-use SSupport\Component\Core\Gateway\Repository\User\GetTicketDefaultAgentsInterface;
+use SSupport\Component\Core\Gateway\Repository\User\GetDefaultAgentsForTicketInterface;
+use SSupport\Component\Core\Gateway\Repository\User\GetRecipientsForNewTicketInterface;
+use SSupport\Component\Core\Gateway\Repository\User\GetRecipientsFromAgentInterface;
+use SSupport\Component\Core\Gateway\Repository\User\GetRecipientsFromCustomerInterface;
 use SSupport\Component\Core\Gateway\Repository\User\UserRepositoryInterface;
 use SSupport\Component\Core\Gateway\Uploader\AttachmentPathGeneratorInterface;
 use SSupport\Component\Core\Gateway\Uploader\AttachmentUpload;
@@ -37,13 +40,19 @@ use SSupport\Module\Core\Factory\Factory;
 use SSupport\Module\Core\Factory\Message\MessageFactory;
 use SSupport\Module\Core\Gateway\Filesystem\LocalUrlAdapter;
 use SSupport\Module\Core\Gateway\Filesystem\UrlAdapterInterface;
-use SSupport\Module\Core\Gateway\Notification\Notifier;
+use SSupport\Module\Core\Gateway\Highlighting\Highlighter;
+use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
+use SSupport\Module\Core\Gateway\Notification\NotifierListener;
 use SSupport\Module\Core\Gateway\Repository\TicketRepository;
+use SSupport\Module\Core\Gateway\Repository\User\GetRecipientsForNewTicket;
+use SSupport\Module\Core\Gateway\Repository\User\GetRecipientsFromAgent;
+use SSupport\Module\Core\Gateway\Repository\User\GetRecipientsFromCustomer;
 use SSupport\Module\Core\Gateway\Repository\User\UserRepository;
 use SSupport\Module\Core\Gateway\Uploader\AttachmentUploadListener;
 use SSupport\Module\Core\Gateway\Uploader\Uploader;
 use SSupport\Module\Core\Gateway\Uploader\UploadFileConverterAttachment;
 use SSupport\Module\Core\Gateway\Uploader\UploadFileConverterAttachmentInterface;
+use SSupport\Module\Core\Resource\Assets\CommonAsset\CommonAsset;
 use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettings;
 use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettingsInterface;
 use SSupport\Module\Core\Resource\config\GridView\CustomerGridViewConfig;
@@ -52,19 +61,23 @@ use SSupport\Module\Core\UseCase\Agent\SendMessageInputForm as AgentSendMessageI
 use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm as CustomerSendMessageInputForm;
 use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettings;
 use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettingsInterface;
+use SSupport\Module\Core\Utils\BootstrapTrait;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
+use yii\base\InvalidConfigException;
 use yii\helpers\FileHelper;
 use yii\i18n\PhpMessageSource;
+use yii\mail\MailerInterface;
 use yii\web\Application as WebApplication;
 use yii\web\GroupUrlRule;
 
 class Bootstrap implements BootstrapInterface
 {
     use ContainerAwareTrait;
+    use BootstrapTrait;
 
     const LOCAL_ATTACHMENTS_DIRECTORY = '/support/attachment/';
 
@@ -87,7 +100,7 @@ class Bootstrap implements BootstrapInterface
         $this->initFactory();
         $this->initGateway();
         $this->initUseCase();
-        $this->initForm();
+        $this->initListeners();
         $this->initTranslations($app);
 
         if ($app instanceof WebApplication) {
@@ -128,7 +141,7 @@ class Bootstrap implements BootstrapInterface
         $this->initEvent();
         $this->initRepository();
 
-        $this->setSingleton(NotifierInterface::class, Notifier::class);
+        $this->initNotifier();
 
         $this->setSingleton(
             AttachmentPathGeneratorInterface::class,
@@ -140,6 +153,8 @@ class Bootstrap implements BootstrapInterface
         ]);
 
         $this->initUploader();
+
+        $this->setSingleton(HighlighterInterface::class, Highlighter::class);
     }
 
     protected function initEvent()
@@ -149,13 +164,38 @@ class Bootstrap implements BootstrapInterface
 
     protected function initRepository()
     {
-        $this->checkDIClass(GetTicketDefaultAgentsInterface::class);
+        $this->checkDIClass(GetDefaultAgentsForTicketInterface::class);
+
+        $this->setSingleton(GetRecipientsForNewTicketInterface::class, GetRecipientsForNewTicket::class);
+        $this->setSingleton(GetRecipientsFromCustomerInterface::class, GetRecipientsFromCustomer::class);
+        $this->setSingleton(GetRecipientsFromAgentInterface::class, GetRecipientsFromAgent::class);
 
         $this->setSingleton(UserRepositoryInterface::class, UserRepository::class, [
             $this->getDIClass(UserInterface::class),
         ]);
 
         $this->setSingleton(TicketRepositoryInterface::class, TicketRepository::class);
+    }
+
+    protected function initNotifier()
+    {
+        $this->setSingleton(MailerInterface::class, function () {
+            return Yii::$app->getMailer();
+        });
+
+        $class = NotifierListenerInterface::class;
+        $this->isSetEmailFrom($class);
+
+        $this->setSingleton($class, NotifierListener::class, [
+            3 => $this->getModule()->emailFrom,
+        ]);
+    }
+
+    protected function isSetEmailFrom($class)
+    {
+        if (empty($this->getModule()->emailFrom) && $this->hasDICass($class)) {
+            throw new InvalidConfigException('Set emailFrom or class "'.$class.'".');
+        }
     }
 
     protected function initUploader()
@@ -184,6 +224,8 @@ class Bootstrap implements BootstrapInterface
 
         $this->setSingleton(CustomerSendMessageInterface::class, CustomerSendMessage::class);
         $this->setSingleton(AgentSendMessageInterface::class, AgentSendMessage::class);
+
+        $this->initForm();
     }
 
     protected function initForm()
@@ -206,8 +248,8 @@ class Bootstrap implements BootstrapInterface
 
     protected function initTranslations(Application $app)
     {
-        if (!isset($app->get('i18n')->translations['ssupport*'])) {
-            $app->get('i18n')->translations['ssupport*'] = [
+        if (!isset($app->get('i18n')->translations['ssupport_core*'])) {
+            $app->get('i18n')->translations['ssupport_core*'] = [
                 'class' => PhpMessageSource::class,
                 'basePath' => __DIR__.'/Resource/i18n',
                 'sourceLanguage' => 'en-US',
@@ -233,6 +275,8 @@ class Bootstrap implements BootstrapInterface
         $this->initUrlRoute($app);
 
         $this->initView($app);
+
+        CommonAsset::register($app->view);
     }
 
     protected function initUrlRoute(WebApplication $app)

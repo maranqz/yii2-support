@@ -3,6 +3,7 @@
 namespace SSupport\Module\Referee\Controller\referee\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use SSupport\Module\Core\Utils\CoreModuleAwareTrait;
 use SSupport\Module\Referee\Module;
@@ -22,6 +23,15 @@ class IndexController extends Controller
     use RefereeModuleAwareTrait;
 
     const PATH = 'referee/ticket/index';
+
+    protected $highlighter;
+
+    public function __construct($id, $module, HighlighterInterface $highlighter, $config = [])
+    {
+        parent::__construct($id, $module, $config);
+
+        $this->highlighter = $highlighter;
+    }
 
     public function behaviors()
     {
@@ -59,6 +69,9 @@ class IndexController extends Controller
     public function actionView($ticketId)
     {
         $ticket = $this->findModel($ticketId);
+
+        $this->highlighter->removeHighlight($ticket, Yii::$app->user->getIdentity());
+
         $messagesProvider = new ActiveDataProvider([
             'query' => $ticket->getRelatedMessages(),
             'sort' => [
@@ -81,6 +94,6 @@ class IndexController extends Controller
             return $model;
         }
 
-        throw new NotFoundHttpException(Yii::t('ssupport', 'The requested page does not exist.'));
+        throw new NotFoundHttpException();
     }
 }
