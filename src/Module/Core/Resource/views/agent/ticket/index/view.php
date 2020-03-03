@@ -21,10 +21,12 @@ yii\web\YiiAsset::register($this);
 ?>
 <div class="ticket-view">
 
-    <h1><?= Html::encode($this->title); ?></h1>
+    <?php $this->beginBlock('title', $this->context->inPlace('title')); ?>
+    <h1><?php echo Html::encode($this->title); ?></h1>
+    <?php $this->endBlock(); ?>
 
     <div class="col-sm-8">
-        <?= MessageFormWidget::widget([
+        <?php echo MessageFormWidget::widget([
             'ticket' => $ticket,
             'pjaxOptions' => [
                 'enablePushState' => false,
@@ -32,13 +34,13 @@ yii\web\YiiAsset::register($this);
             'action' => MessageController::PATH.'/send',
         ]); ?>
 
-        <?= MessagesWidget::widget([
+        <?php echo MessagesWidget::widget([
             'dataProvider' => $messagesProvider,
         ]); ?>
     </div>
 
     <div class="col-sm-4">
-        <?= DetailView::widget($detailView); ?>
+        <?php echo DetailView::widget($detailView); ?>
     </div>
 
 </div>

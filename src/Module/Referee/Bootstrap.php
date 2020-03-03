@@ -13,6 +13,9 @@ use SSupport\Component\Referee\Gateway\Repository\User\UserRepositoryInterface;
 use SSupport\Component\Referee\UseCase\Customer\RequestReferee\RequestReferee;
 use SSupport\Component\Referee\UseCase\Customer\RequestReferee\RequestRefereeInputInterface;
 use SSupport\Component\Referee\UseCase\Customer\RequestReferee\RequestRefereeInterface;
+use SSupport\Component\Referee\UseCase\Customer\SetTimeoutRequest\SetTimeoutRequest;
+use SSupport\Component\Referee\UseCase\Customer\SetTimeoutRequest\SetTimeoutRequestInputInterface;
+use SSupport\Component\Referee\UseCase\Customer\SetTimeoutRequest\SetTimeoutRequestInterface;
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\SendMessage;
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\SendMessageInterface;
@@ -23,14 +26,19 @@ use SSupport\Module\Core\Resource\Widget\Messages\Widget\HeaderWidget as CoreHea
 use SSupport\Module\Core\Utils\BootstrapTrait;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use SSupport\Module\Referee\Gateway\Notification\NotifierListener as RefereeNotifierListener;
+use SSupport\Module\Referee\Gateway\Repository\TimeoutRequestReferee\GetTimeoutRequestRefereeInterface;
+use SSupport\Module\Referee\Gateway\Repository\TimeoutRequestReferee\TicketGetTimeoutRequestReferee;
 use SSupport\Module\Referee\Gateway\Repository\User\GetRecipientsFromAgent;
 use SSupport\Module\Referee\Gateway\Repository\User\GetRecipientsFromCustomer;
 use SSupport\Module\Referee\Gateway\Repository\User\SimpleGetRefereeForTicket;
 use SSupport\Module\Referee\Gateway\Repository\User\UserRepository;
+use SSupport\Module\Referee\Gateway\TimeoutRequestRefereeStatus\TimeoutRequestRefereeStatus;
+use SSupport\Module\Referee\Gateway\TimeoutRequestRefereeStatus\TimeoutRequestRefereeStatusInterface;
 use SSupport\Module\Referee\Resource\config\GridView\RefereeGridViewSettings;
 use SSupport\Module\Referee\Resource\config\GridView\RefereeGridViewSettingsInterface;
 use SSupport\Module\Referee\Resource\Widget\Messages\Widget\HeaderWidget as RefereeHeaderWidget;
 use SSupport\Module\Referee\UseCase\Customer\RequestRefereeInputForm;
+use SSupport\Module\Referee\UseCase\Customer\SetTimeoutRequestInputForm;
 use SSupport\Module\Referee\UseCase\Referee\SendMessageInputForm;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Yii;
@@ -43,16 +51,22 @@ use yii\web\GroupUrlRule;
 
 class Bootstrap implements BootstrapInterface
 {
-    use ContainerAwareTrait;
     use BootstrapTrait;
+    use ContainerAwareTrait;
 
-    /** @var CoreModule */
+    /**
+     * @var CoreModule
+     */
     protected $coreModule;
 
-    /** @var Module */
+    /**
+     * @var Module
+     */
     protected $module;
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function bootstrap($app)
     {
         $this->checkCoreModule($app);
@@ -81,8 +95,7 @@ class Bootstrap implements BootstrapInterface
         $this->initRepository();
         $this->initNotifier();
 
-        $this->setSingleton(GetRefereeForTicketInterface::class, SimpleGetRefereeForTicket::class);
-        $this->setSingleton(UserRepositoryInterface::class, UserRepository::class);
+        $this->setSingleton(TimeoutRequestRefereeStatusInterface::class, TimeoutRequestRefereeStatus::class);
     }
 
     protected function initRepository()
@@ -99,6 +112,11 @@ class Bootstrap implements BootstrapInterface
             [],
             true
         );
+
+        $this->setSingleton(GetRefereeForTicketInterface::class, SimpleGetRefereeForTicket::class);
+        $this->setSingleton(UserRepositoryInterface::class, UserRepository::class);
+
+        $this->setSingleton(GetTimeoutRequestRefereeInterface::class, TicketGetTimeoutRequestReferee::class);
     }
 
     protected function initNotifier()
@@ -132,6 +150,7 @@ class Bootstrap implements BootstrapInterface
     {
         $this->setSingleton(RequestRefereeInterface::class, RequestReferee::class);
         $this->setSingleton(SendMessageInterface::class, SendMessage::class);
+        $this->setSingleton(SetTimeoutRequestInterface::class, SetTimeoutRequest::class);
 
         $this->initForm();
         $this->initWidget();
@@ -141,6 +160,7 @@ class Bootstrap implements BootstrapInterface
     {
         $this->setSingleton(RequestRefereeInputInterface::class, RequestRefereeInputForm::class);
         $this->setSingleton(SendMessageInputInterface::class, SendMessageInputForm::class);
+        $this->setSingleton(SetTimeoutRequestInputInterface::class, SetTimeoutRequestInputForm::class);
     }
 
     protected function initWidget()

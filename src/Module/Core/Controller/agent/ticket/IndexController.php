@@ -3,6 +3,7 @@
 namespace SSupport\Module\Core\Controller\agent\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
 use SSupport\Module\Core\Module;
 use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettingsInterface;
@@ -17,6 +18,7 @@ use yii\web\NotFoundHttpException;
 
 class IndexController extends Controller
 {
+    use BlockTrait;
     use ContainerAwareTrait;
     use CoreModuleAwareTrait;
 

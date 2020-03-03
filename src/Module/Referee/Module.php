@@ -10,6 +10,9 @@ use SSupport\Component\Referee\UseCase\Customer\RequestReferee\AfterRequestRefer
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\AfterSendMessage as RefereeAfterSendMessage;
 use SSupport\Module\Core\Module as CoreModule;
 use SSupport\Module\Core\Utils\ModuleTrait;
+use SSupport\Module\Referee\Controller\customer\referee\IndexController;
+use SSupport\Module\Referee\Gateway\Repository\TimeoutRequestReferee\GetTimeoutRequestRefereeInterface;
+use SSupport\Module\Referee\Gateway\TimeoutRequestRefereeStatus\TimeoutRequestRefereeStatusInterface;
 use SSupport\Module\Referee\Resource\config\GridView\RefereeGridViewSettingsInterface;
 use SSupport\Module\Referee\Resource\Widget\RequestReferee\RequestRefereeWidget;
 use Yii;
@@ -25,6 +28,13 @@ class Module extends BaseModule
     public static $name = self::DEFAULT_NAME;
 
     public $prefix;
+
+    /**
+     * delay before customer can request referee.
+     *
+     * @var int|bool
+     */
+    public $timeoutRequestReferee = false;
 
     public $routes = [
         '<path:(customer)>/<controller:(referee)>/<action>' => '<path>/<controller>/<action>',
@@ -46,19 +56,46 @@ class Module extends BaseModule
 
     public static function getViewDetailConfigDefault(RefereeTicketInterface $ticket)
     {
+        /** @var TimeoutRequestRefereeStatusInterface $timeoutRequestRefereeStatus */
+        $timeoutRequestRefereeStatus = Yii::$container->get(TimeoutRequestRefereeStatusInterface::class);
+        /** @var GetTimeoutRequestRefereeInterface $getTimeoutRequestReferee */
+        $getTimeoutRequestReferee = Yii::$container->get(GetTimeoutRequestRefereeInterface::class);
+
         return [
             'attributes' => [
                 'referee' => [
                     'label' => Yii::t('ssupport_referee', 'Referee'),
-                    'value' => function ($ticket) {
+                    'value' => function ($ticket) use ($timeoutRequestRefereeStatus, $getTimeoutRequestReferee) {
                         /** @var RefereeTicketInterface $ticket */
-                        if ($ticket->getReferee()) {
+                        if ($timeoutRequestRefereeStatus->hasReferee($ticket)) {
                             return Yii::$app->formatter->asText($ticket->getReferee()->getNickname());
                         }
 
-                        return RequestRefereeWidget::widget([
-                            'ticketId' => $ticket->getId(),
-                            'hasRequested' => $ticket->hasReferee(),
+                        if ($timeoutRequestRefereeStatus->canRequestReferee($ticket)) {
+                            return RequestRefereeWidget::widget([
+                                'ticketId' => $ticket->getId(),
+                                'hasRequested' => $ticket->hasReferee(),
+                                'options' => [
+                                    'class' => 'btn btn-danger',
+                                ],
+                            ]);
+                        }
+
+                        if ($timeoutRequestRefereeStatus->canSetTimeoutRequestReferee($ticket)) {
+                            return RequestRefereeWidget::widget([
+                                'ticketId' => $ticket->getId(),
+                                'hasRequested' => $ticket->hasReferee(),
+                                'url' => [
+                                    '/'.self::DEFAULT_NAME.'/'.IndexController::PATH.'/request',
+                                    'ticketId' => $ticket->getId(),
+                                ],
+                            ]);
+                        }
+
+                        return Yii::t('ssupport_referee', 'You can invite an referee in {time}.', [
+                            'time' => Yii::$app->formatter->asDuration(
+                                $getTimeoutRequestReferee($ticket)->getRemainingTimeoutRequest()
+                            ),
                         ]);
                     },
                     'format' => 'html',

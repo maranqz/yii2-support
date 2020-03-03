@@ -3,6 +3,7 @@
 namespace SSupport\Module\Referee\Controller\referee\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use SSupport\Module\Core\Utils\CoreModuleAwareTrait;
@@ -18,6 +19,7 @@ use yii\web\NotFoundHttpException;
 
 class IndexController extends Controller
 {
+    use BlockTrait;
     use ContainerAwareTrait;
     use CoreModuleAwareTrait;
     use RefereeModuleAwareTrait;

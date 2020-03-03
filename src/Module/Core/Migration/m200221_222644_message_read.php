@@ -8,7 +8,7 @@ class m200221_222644_message_read extends Migration
 {
     public function safeUp()
     {
-        $this->addColumn('{{%ticket}}', 'readers', $this->json()->after('assign_id'));
+        $this->addColumn('{{%ticket}}', 'readers', $this->text()->after('assign_id'));
     }
 
     public function safeDown()

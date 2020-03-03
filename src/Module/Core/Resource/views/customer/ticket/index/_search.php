@@ -18,19 +18,19 @@ use yii\widgets\ActiveForm;
         ],
     ]); ?>
 
-    <?= $form->field($model, 'id'); ?>
+    <?php echo $form->field($model, 'id'); ?>
 
-    <?= $form->field($model, 'subject'); ?>
+    <?php echo $form->field($model, 'subject'); ?>
 
-    <?= $form->field($model, 'customer_id'); ?>
+    <?php echo $form->field($model, 'customer_id'); ?>
 
-    <?= $form->field($model, 'assign_id'); ?>
+    <?php echo $form->field($model, 'assign_id'); ?>
 
-    <?= $form->field($model, 'created_at'); ?>
+    <?php echo $form->field($model, 'created_at'); ?>
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('ssupport_core', 'Search'), ['class' => 'btn btn-primary']); ?>
-        <?= Html::resetButton(Yii::t('ssupport_core', 'Reset'), ['class' => 'btn btn-default']); ?>
+        <?php echo Html::submitButton(Yii::t('ssupport_core', 'Search'), ['class' => 'btn btn-primary']); ?>
+        <?php echo Html::resetButton(Yii::t('ssupport_core', 'Reset'), ['class' => 'btn btn-default']); ?>
     </div>
 
     <?php ActiveForm::end(); ?>

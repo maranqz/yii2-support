@@ -5,6 +5,7 @@ namespace SSupport\Module\Core\Controller\customer\ticket;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
+use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Gateway\Repository\GetTicketByIdTrait;
 use SSupport\Module\Core\Module;
 use SSupport\Module\Core\RBAC\IsOwnerCustomerRule;
@@ -19,6 +20,7 @@ use yii\web\NotFoundHttpException;
 
 class MessageController extends Controller
 {
+    use BlockTrait;
     use ContainerAwareTrait;
     use CoreModuleAwareTrait;
     use GetTicketByIdTrait;

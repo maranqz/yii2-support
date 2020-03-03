@@ -4,14 +4,14 @@ namespace SSupport\Module\Core\UseCase\Form;
 
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
-use SSupport\Module\Core\Utils\ModelGetRulesTrait;
+use SSupport\Module\Core\Utils\ModelGetParamsTrait;
 use Yii;
 use yii\base\Model;
 
 abstract class AbstractSendMessageInputForm extends Model implements FileAcceptAwareInterface
 {
     use ContainerAwareTrait;
-    use ModelGetRulesTrait;
+    use ModelGetParamsTrait;
 
     public $text;
 
@@ -32,10 +32,12 @@ abstract class AbstractSendMessageInputForm extends Model implements FileAcceptA
 
     public function attributeLabels()
     {
-        return [
-            'text' => Yii::t('ssupport_core', 'Text'),
-            'files' => Yii::t('ssupport_core', 'Files'),
-        ];
+        return array_merge(
+            $this->getModelAttributesByFields(MessageInterface::class, ['text']),
+            [
+                'files' => Yii::t('ssupport_core', 'Files'),
+            ]
+        );
     }
 
     public function getTicket_id()

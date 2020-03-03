@@ -15,10 +15,10 @@ use SSupport\Module\Core\Utils\ContainerAwareTrait;
 
 class SendMessageInputForm extends BaseSendMessageForm implements SendMessageInputInterface, AttachmentUploadsAwareInterface, FileAcceptAwareInterface
 {
+    use AttachmentUploadSettingsAwareTrait;
+    use AttachmentUploadsTrait;
     use ContainerAwareTrait;
     use TicketAwareTrait;
-    use AttachmentUploadsTrait;
-    use AttachmentUploadSettingsAwareTrait;
 
     protected $agent;
 

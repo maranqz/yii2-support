@@ -5,6 +5,7 @@ namespace SSupport\Module\Referee\Controller\referee\ticket;
 use SSupport\Component\Referee\Entity\RefereeTicketInterface;
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Referee\UseCase\Referee\SendMessage\SendMessageInterface;
+use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Module as CoreModule;
 use SSupport\Module\Core\Resource\Widget\MessageForm\MessageFormWidget;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
@@ -17,6 +18,7 @@ use yii\web\NotFoundHttpException;
 
 class MessageController extends Controller
 {
+    use BlockTrait;
     use ContainerAwareTrait;
 
     const PATH = 'referee/ticket/message';

@@ -4,6 +4,7 @@ namespace SSupport\Module\Core\Controller\customer\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInterface;
+use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Entity\Ticket;
 use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
 use SSupport\Module\Core\Gateway\Repository\GetTicketByIdTrait;
@@ -22,6 +23,7 @@ use yii\web\NotFoundHttpException;
 
 class IndexController extends Controller
 {
+    use BlockTrait;
     use ContainerAwareTrait;
     use CoreModuleAwareTrait;
     use GetTicketByIdTrait;

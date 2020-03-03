@@ -17,16 +17,16 @@ $attachments = $model->getAttachments();
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <?= HeaderWidget::widget(['message' => $model]); ?>
+        <?php echo HeaderWidget::widget(['message' => $model]); ?>
     </div>
     <div class="panel-body">
-        <?= TextWidget::widget(['message' => $model]); ?>
+        <?php echo TextWidget::widget(['message' => $model]); ?>
     </div>
-    <?php if ($attachments): ?>
+    <?php if ($attachments) { ?>
         <div class="panel-footer">
-            <?= AttachmentsWidget::widget([
+            <?php echo AttachmentsWidget::widget([
                 'attachments' => $attachments,
             ]); ?>
         </div>
-    <?php endif; ?>
+    <?php } ?>
 </div>

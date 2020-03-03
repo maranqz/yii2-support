@@ -7,7 +7,6 @@ use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Factory\FactoryInterface;
 use SSupport\Component\Core\Factory\Message\CreateMessageInput;
 use SSupport\Component\Core\Factory\Message\MessageFactoryInterface;
-use SSupport\Component\Core\Gateway\Notification\NotifierListenerInterface;
 use SSupport\Component\Core\Gateway\Repository\TicketRepositoryInterface;
 use SSupport\Component\Core\Gateway\Repository\User\UserRepositoryInterface;
 
@@ -16,7 +15,6 @@ class CreateTicket implements CreateTicketInterface
     protected $ticketRepository;
     protected $userRepository;
     protected $messageFactory;
-    protected $notifier;
     protected $ticketFactory;
     protected $eventDispatcher;
 
@@ -24,14 +22,12 @@ class CreateTicket implements CreateTicketInterface
         TicketRepositoryInterface $ticketRepository,
         UserRepositoryInterface $userRepository,
         MessageFactoryInterface $messageFactory,
-        NotifierListenerInterface $notifier,
         FactoryInterface $ticketFactory,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->ticketRepository = $ticketRepository;
         $this->userRepository = $userRepository;
         $this->messageFactory = $messageFactory;
-        $this->notifier = $notifier;
         $this->ticketFactory = $ticketFactory;
         $this->eventDispatcher = $eventDispatcher;
     }

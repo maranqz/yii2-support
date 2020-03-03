@@ -16,7 +16,7 @@ use yii\widgets\Pjax;
  */
 
 ?>
-<div class="message-form <?= $containerClass; ?>">
+<div class="message-form <?php echo $containerClass; ?>">
 
     <?php Pjax::begin($pjaxOptions); ?>
     <?php $form = ActiveForm::begin(array_replace_recursive([
@@ -26,16 +26,16 @@ use yii\widgets\Pjax;
         ],
     ], $formOptions)); ?>
 
-    <?= $form->field($model, 'text')->textarea(); ?>
+    <?php echo $form->field($model, 'text')->textarea(); ?>
 
-    <?= $form->field($model, 'files[]')->fileInput([
+    <?php echo $form->field($model, 'files[]')->fileInput([
         'multiple' => true,
         'accept' => $model->getAcceptType(),
     ]); ?>
 
 
     <div class="form-group">
-        <?= Html::submitButton(Yii::t('ssupport_core', 'Send'), ['class' => 'btn btn-success']); ?>
+        <?php echo Html::submitButton(Yii::t('ssupport_core', 'Send'), ['class' => 'btn btn-success']); ?>
     </div>
 
     <?php ActiveForm::end(); ?>

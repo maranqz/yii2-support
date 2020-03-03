@@ -21,4 +21,5 @@ return [
     'Request referee' => 'Позвать рефери',
     'notifier_referee_request_html' => 'Новое сообщение от пользователя {nickname} в обращении "{subject}", его можно прочесть по {link}.',
     'notifier_referee_request_txt' => 'Новое сообщение от пользователя {nickname} в обращении "{subject}", его можно прочесть по ссылке: {link}.',
+    'You can invite an referee in {time}.' => 'Вы сможете пригласить реферии через {time}.',
 ];

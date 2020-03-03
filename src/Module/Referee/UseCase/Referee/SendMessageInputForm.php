@@ -15,9 +15,9 @@ use SSupport\Module\Core\Utils\ContainerAwareTrait;
 
 class SendMessageInputForm extends BaseSendMessageForm implements SendMessageInputInterface, AttachmentUploadsAwareInterface, FileAcceptAwareInterface
 {
-    use ContainerAwareTrait;
-    use AttachmentUploadsTrait;
     use AttachmentUploadSettingsAwareTrait;
+    use AttachmentUploadsTrait;
+    use ContainerAwareTrait;
 
     protected $referee;
     protected $ticket;

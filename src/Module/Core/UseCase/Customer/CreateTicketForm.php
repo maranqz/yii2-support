@@ -12,15 +12,15 @@ use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettingsInterface;
 use SSupport\Module\Core\UseCase\Form\AttachmentUploadsTrait;
 use SSupport\Module\Core\UseCase\Form\FileAcceptAwareInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
-use SSupport\Module\Core\Utils\ModelGetRulesTrait;
+use SSupport\Module\Core\Utils\ModelGetParamsTrait;
 use yii\base\Model;
 
 class CreateTicketForm extends Model implements CreateTicketInputInterface, AttachmentUploadsAwareInterface, FileAcceptAwareInterface
 {
-    use ContainerAwareTrait;
-    use ModelGetRulesTrait;
-    use AttachmentUploadsTrait;
     use AttachmentUploadSettingsAwareTrait;
+    use AttachmentUploadsTrait;
+    use ContainerAwareTrait;
+    use ModelGetParamsTrait;
 
     public $subject;
     public $text;
@@ -45,6 +45,14 @@ class CreateTicketForm extends Model implements CreateTicketInputInterface, Atta
         );
 
         return $rules;
+    }
+
+    public function attributeLabels()
+    {
+        return array_merge(
+            $this->getModelAttributesByFields(TicketInterface::class, ['subject']),
+            $this->getModelAttributesByFields(MessageInterface::class, ['text'])
+        );
     }
 
     public function getCustomer(): UserInterface

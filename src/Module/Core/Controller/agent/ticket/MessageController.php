@@ -5,6 +5,7 @@ namespace SSupport\Module\Core\Controller\agent\ticket;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
+use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Module;
 use SSupport\Module\Core\Resource\Widget\MessageForm\MessageFormWidget;
 use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm;
@@ -16,6 +17,7 @@ use yii\web\NotFoundHttpException;
 
 class MessageController extends Controller
 {
+    use BlockTrait;
     use ContainerAwareTrait;
 
     const PATH = 'agent/ticket/message';

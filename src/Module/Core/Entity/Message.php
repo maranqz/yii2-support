@@ -18,8 +18,8 @@ use yii\db\ActiveRecordInterface;
 class Message extends ActiveRecord implements MessageInterface
 {
     use ContainerAwareTrait;
-    use IdentifyTrait;
     use CreatedAtTrait;
+    use IdentifyTrait;
 
     public static function tableName()
     {

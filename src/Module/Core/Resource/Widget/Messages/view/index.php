@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 
 <?php Pjax::begin(); ?>
 
-<?= ListView::widget([
+<?php echo ListView::widget([
     'dataProvider' => $dataProvider,
     'itemView' => '@SSupport/Module/Core/Resource/Widget/Messages/view/message',
     'viewParams' => [

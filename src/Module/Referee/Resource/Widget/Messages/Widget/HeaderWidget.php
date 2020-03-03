@@ -11,7 +11,7 @@ class HeaderWidget extends Widget
 {
     /** @var Message */
     public $message;
-    /** @var callable someFunction(HeaderWidget $widget) */
+    /** @var callable someFunction(HeaderWidget) */
     public $refereeMark;
     /** @var string */
     public $template = '%s%s (%s)';

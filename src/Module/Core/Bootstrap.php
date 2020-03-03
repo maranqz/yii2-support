@@ -76,15 +76,17 @@ use yii\web\GroupUrlRule;
 
 class Bootstrap implements BootstrapInterface
 {
-    use ContainerAwareTrait;
     use BootstrapTrait;
+    use ContainerAwareTrait;
 
-    const LOCAL_ATTACHMENTS_DIRECTORY = '/support/attachment/';
-
-    /** @var Module */
+    /**
+     * @var Module
+     */
     protected $module;
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function bootstrap($app)
     {
         if (!$this->initModule($app)) {

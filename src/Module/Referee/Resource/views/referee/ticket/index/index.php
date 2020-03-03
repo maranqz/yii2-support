@@ -14,10 +14,13 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="ticket-index">
 
-    <h1><?= Html::encode($this->title); ?></h1>
+    <?php $this->beginBlock('title', $this->context->inPlace('title')); ?>
+    <h1><?php echo Html::encode($this->title); ?></h1>
+    <?php $this->endBlock(); ?>
+
     <?php Pjax::begin(); ?>
     <?php // echo $this->render('_search', ['model' => $searchModel]);?>
 
-    <?= GridView::widget($gridViewConfig); ?>
+    <?php echo GridView::widget($gridViewConfig); ?>
     <?php Pjax::end(); ?>
 </div>

@@ -7,8 +7,8 @@ use yii\helpers\Html;
 /* @var $attachments Attachment[] */
 ?>
 
-<?php foreach ($attachments as $attachment): ?>
-    <?= Html::a(
+<?php foreach ($attachments as $attachment) { ?>
+    <?php echo Html::a(
         sprintf('%s (%s)',
             $attachment->getName(),
             Yii::$app->formatter->asSize($attachment->getSize())
@@ -19,4 +19,4 @@ use yii\helpers\Html;
             'target' => '_blank',
         ]
     ); ?>
-<?php endforeach; ?>
+<?php } ?>

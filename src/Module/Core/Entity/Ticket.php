@@ -4,7 +4,6 @@ namespace SSupport\Module\Core\Entity;
 
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use paulzi\jsonBehavior\JsonBehavior;
-use paulzi\jsonBehavior\JsonField;
 use paulzi\jsonBehavior\JsonValidator;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
@@ -20,7 +19,7 @@ use yii\db\ActiveRecord;
 use yii\db\ActiveRecordInterface;
 
 /**
- * @property JsonField $readers
+ * @property $readers JsonField
  */
 class Ticket extends ActiveRecord implements TicketInterface
 {
@@ -117,7 +116,9 @@ class Ticket extends ActiveRecord implements TicketInterface
         return $this;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function getAssigns(): iterable
     {
         return [$this->__get('relatedAssign')];
@@ -160,7 +161,7 @@ class Ticket extends ActiveRecord implements TicketInterface
 
     protected function getRelatedCustomer()
     {
-        return $this->hasOne($this->getDIClass(UserInterface::class), ['id' => 'customer_id']);
+        return $this->hasOne($this->getDIClass(UserInterface::class), ['id' => 'customer_id'])->onCondition([]);
     }
 
     public function addReader(UserInterface $reader)

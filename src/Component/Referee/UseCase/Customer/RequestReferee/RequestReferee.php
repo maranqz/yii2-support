@@ -3,22 +3,18 @@
 namespace SSupport\Component\Referee\UseCase\Customer\RequestReferee;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use SSupport\Component\Referee\Gateway\Notification\NotifierListenerInterface;
 use SSupport\Component\Referee\Gateway\Repository\User\UserRepositoryInterface;
 
 class RequestReferee implements RequestRefereeInterface
 {
     protected $userRepository;
-    protected $notifier;
     protected $eventDispatcher;
 
     public function __construct(
         UserRepositoryInterface $userRepository,
-        NotifierListenerInterface $notifier,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->userRepository = $userRepository;
-        $this->notifier = $notifier;
         $this->eventDispatcher = $eventDispatcher;
     }
 
