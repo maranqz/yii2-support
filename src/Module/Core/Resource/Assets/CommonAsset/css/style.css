@@ -1,0 +1,40 @@
+textarea.form-control {
+    resize: vertical;
+}
+
+.text-break {
+    word-break: break-word;
+    overflow-wrap: break-word;
+}
+
+.text-truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.max-width-0 {
+    max-width: 0;
+}
+
+.cell_id {
+    max-width: 0;
+    min-width: 65px;
+}
+
+.cell_subject {
+    width: 100%;
+    max-width: 0;
+}
+
+.cell_customer {
+    min-width: 150px;
+}
+
+.cell_assign {
+    min-width: 150px;
+}
+
+.cell_created_at {
+    min-width: 110px;
+}
