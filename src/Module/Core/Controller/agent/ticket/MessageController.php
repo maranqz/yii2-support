@@ -3,12 +3,12 @@
 namespace SSupport\Module\Core\Controller\agent\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
-use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
-use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
+use SSupport\Component\Core\UseCase\Agent\SendMessage\SendMessageInputInterface;
+use SSupport\Component\Core\UseCase\Agent\SendMessage\SendMessageInterface;
 use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Module;
 use SSupport\Module\Core\Resource\Widget\MessageForm\MessageFormWidget;
-use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm;
+use SSupport\Module\Core\UseCase\Agent\SendMessageInputForm;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use Yii;
 use yii\filters\AccessControl;
@@ -29,6 +29,9 @@ class MessageController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
+                        /*
+                         * @TODO setting block only set ticket
+                         */
                         'allow' => true,
                         'roles' => [Module::AGENT_ROLE],
                     ],
@@ -46,7 +49,7 @@ class MessageController extends Controller
         $model->setTicket($ticket);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             Yii::$app->db->transaction(function () use ($model) {
-                $model->setCustomer(Yii::$app->getUser()->getIdentity());
+                $model->setAgent(Yii::$app->getUser()->getIdentity());
 
                 $this->make(SendMessageInterface::class)($model);
             });

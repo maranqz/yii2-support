@@ -1,5 +1,6 @@
 <?php
 
+use SSupport\Module\Core\Resource\Widget\GuestCreateTicket\GuestCreateTicketWidget;
 use SSupport\Module\Core\UseCase\Customer\CreateTicketForm;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
@@ -20,6 +21,11 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="ticket-form">
 
         <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+
+        <?php echo GuestCreateTicketWidget::widget([
+            'model' => $model,
+            'form' => $form,
+        ]); ?>
 
         <?php echo $form->field($model, 'subject')->textInput(['maxlength' => true]); ?>
 

@@ -19,7 +19,7 @@
 return [
     'Assign' => 'Назначенный',
     'Assign ID' => 'ID назначенного',
-    'Create Ticket' => 'Создать запрос',
+    'Create Ticket' => 'Создать обращение',
     'Created At' => 'Создано',
     'Customer' => 'Клиент',
     'Customer ID' => 'ID клиента',
@@ -27,7 +27,7 @@ return [
     'ID' => '',
     'Message ID' => 'ID сообщения',
     'Name' => 'Имя',
-    'Nickname' => 'Имя',
+    'Nickname' => 'Ник (Nickname)',
     'Path' => 'Путь',
     'Reset' => 'Сбросить',
     'Save' => 'Сохранить',
@@ -43,4 +43,7 @@ return [
     'notifier_text' => 'Новое сообщение от пользователя {nickname} в обращении, его можно прочесть по ссылке: {link}.',
     'notifier_html' => 'Новое сообщение от пользователя {nickname} в обращении, его можно прочесть по {link}.',
     'message_link' => 'ссылке',
+    'ticket_created_success' => 'Обращение успешно создано.',
+    'to_view_ticket' => 'Для просмотра обращение необходимо {link}.',
+    'authorize' => 'авторизоваться',
 ];

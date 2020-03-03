@@ -43,6 +43,8 @@ class Module extends BaseModule
 
     public $emailFrom;
 
+    public $isGuestCreateTicket = false;
+
     public $uploaderListenerEvents = [
         AfterCreateTicket::class,
         CustomerAfterSendMessage::class,

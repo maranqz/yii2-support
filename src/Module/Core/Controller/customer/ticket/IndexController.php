@@ -3,6 +3,7 @@
 namespace SSupport\Module\Core\Controller\customer\ticket;
 
 use SSupport\Component\Core\Entity\TicketInterface;
+use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInputInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInterface;
 use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Entity\Ticket;
@@ -31,12 +32,19 @@ class IndexController extends Controller
     const PATH = 'customer/ticket/index';
 
     protected $highlighter;
+    protected $redirectAfterCreateTicket;
 
-    public function __construct($id, $module, HighlighterInterface $highlighter, $config = [])
-    {
+    public function __construct(
+        $id,
+        $module,
+        HighlighterInterface $highlighter,
+        RedirectAfterCreateTicketInterface $redirectAfterCreateTicket,
+        $config = []
+    ) {
         parent::__construct($id, $module, $config);
 
         $this->highlighter = $highlighter;
+        $this->redirectAfterCreateTicket = $redirectAfterCreateTicket;
     }
 
     public function behaviors()
@@ -47,7 +55,12 @@ class IndexController extends Controller
                 'rules' => [
                     [
                         'allow' => true,
-                        'actions' => ['index', 'create'],
+                        'actions' => ['create', 'after-create'],
+                        'roles' => ['?', Module::CUSTOMER_ROLE],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['index'],
                         'roles' => [Module::CUSTOMER_ROLE],
                     ],
                     [
@@ -106,22 +119,27 @@ class IndexController extends Controller
 
     public function actionCreate()
     {
-        /** @var CreateTicketForm $model */
-        $model = $this->make(CreateTicketForm::class);
+        /** @var CreateTicketForm|CreateTicketInputInterface $model */
+        $model = $this->make(CreateTicketInputInterface::class);
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $model->setCustomer(Yii::$app->getUser()->getIdentity());
-
             /** @var TicketInterface $ticket */
             $ticket = Yii::$app->db->transaction(function () use ($model) {
                 return $this->make(CreateTicketInterface::class)($model);
             });
 
-            return $this->redirect(['view', 'ticketId' => $ticket->getId()]);
+            return ($this->redirectAfterCreateTicket)($this, $ticket);
         }
 
         return $this->render('create', [
             'model' => $model,
+        ]);
+    }
+
+    public function actionAfterCreate($ticketId)
+    {
+        return $this->render('afterCreate', [
+            'ticketId' => $ticketId,
         ]);
     }
 

@@ -40,6 +40,9 @@ class IndexController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
+                        /*
+                         * @TODO setting block only set ticket
+                         */
                         'allow' => true,
                         'roles' => [Module::AGENT_ROLE],
                     ],

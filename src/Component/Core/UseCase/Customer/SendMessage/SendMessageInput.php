@@ -2,8 +2,8 @@
 
 namespace SSupport\Component\Core\UseCase\Customer\SendMessage;
 
+use SSupport\Component\Core\Entity\CustomerInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
-use SSupport\Component\Core\Entity\UserInterface;
 
 class SendMessageInput implements SendMessageInputInterface
 {
@@ -14,7 +14,7 @@ class SendMessageInput implements SendMessageInputInterface
 
     public function __construct(
         TicketInterface $ticket,
-        UserInterface $customer,
+        CustomerInterface $customer,
         string $text,
         iterable $attachments = null
     ) {
@@ -29,7 +29,7 @@ class SendMessageInput implements SendMessageInputInterface
         return $this->ticket;
     }
 
-    public function getCustomer(): UserInterface
+    public function getCustomer(): CustomerInterface
     {
         return $this->customer;
     }

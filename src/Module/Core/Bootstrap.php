@@ -8,6 +8,7 @@ use League\Flysystem\Filesystem;
 use League\Flysystem\FilesystemInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use SSupport\Component\Core\Entity\AttachmentInterface;
+use SSupport\Component\Core\Entity\CustomerInterface;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Entity\UserInterface;
@@ -29,10 +30,13 @@ use SSupport\Component\Core\UseCase\Agent\SendMessage\SendMessage as AgentSendMe
 use SSupport\Component\Core\UseCase\Agent\SendMessage\SendMessageInputInterface as AgentSendMessageInputInterface;
 use SSupport\Component\Core\UseCase\Agent\SendMessage\SendMessageInterface as AgentSendMessageInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicket;
+use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInputInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessage as CustomerSendMessage;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface as CustomerSendMessageInputInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface as CustomerSendMessageInterface;
+use SSupport\Module\Core\Controller\customer\ticket\RedirectAfterCreateTicket;
+use SSupport\Module\Core\Controller\customer\ticket\RedirectAfterCreateTicketInterface;
 use SSupport\Module\Core\Entity\Attachment;
 use SSupport\Module\Core\Entity\Message;
 use SSupport\Module\Core\Entity\Ticket;
@@ -58,6 +62,9 @@ use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettingsInterface
 use SSupport\Module\Core\Resource\config\GridView\CustomerGridViewConfig;
 use SSupport\Module\Core\Resource\config\GridView\CustomerGridViewSettingsInterface;
 use SSupport\Module\Core\UseCase\Agent\SendMessageInputForm as AgentSendMessageInputForm;
+use SSupport\Module\Core\UseCase\Customer\CreateTicketForm;
+use SSupport\Module\Core\UseCase\Customer\Repository\GetCustomerByCreteTicketInput;
+use SSupport\Module\Core\UseCase\Customer\Repository\GetCustomerByCreteTicketInputInterface;
 use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm as CustomerSendMessageInputForm;
 use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettings;
 use SSupport\Module\Core\UseCase\Form\AttachmentUploadSettingsInterface;
@@ -127,6 +134,7 @@ class Bootstrap implements BootstrapInterface
         $this->setSingleton(TicketInterface::class, Ticket::class);
         $this->setSingleton(MessageInterface::class, Message::class);
         $this->setSingleton(AttachmentInterface::class, Attachment::class);
+        $this->setSingleton(CustomerInterface::class, UserInterface::class);
     }
 
     protected function initFactory()
@@ -220,8 +228,9 @@ class Bootstrap implements BootstrapInterface
 
     protected function initUseCase()
     {
+        $this->setSingleton(RedirectAfterCreateTicketInterface::class, RedirectAfterCreateTicket::class);
         $this->setSingleton(CreateTicketInterface::class, CreateTicket::class, [
-            4 => $this->make(FactoryInterface::class.'.Ticket'),
+            3 => $this->make(FactoryInterface::class.'.Ticket'),
         ]);
 
         $this->setSingleton(CustomerSendMessageInterface::class, CustomerSendMessage::class);
@@ -246,6 +255,9 @@ class Bootstrap implements BootstrapInterface
             ],
             Module::DEFAULT_ATTACHMENTS_MIME_TYPE,
         ]);
+
+        $this->setSingleton(GetCustomerByCreteTicketInputInterface::class, GetCustomerByCreteTicketInput::class);
+        $this->setSingleton(CreateTicketInputInterface::class, CreateTicketForm::class);
     }
 
     protected function initTranslations(Application $app)

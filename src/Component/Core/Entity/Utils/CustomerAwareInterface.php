@@ -2,11 +2,11 @@
 
 namespace SSupport\Component\Core\Entity\Utils;
 
-use SSupport\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Entity\CustomerInterface;
 
 interface CustomerAwareInterface
 {
-    public function getCustomer(): UserInterface;
+    public function getCustomer(): CustomerInterface;
 
-    public function setCustomer(UserInterface $customer): self;
+    public function setCustomer(CustomerInterface $customer): self;
 }

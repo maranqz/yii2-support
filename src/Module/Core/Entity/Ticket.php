@@ -5,6 +5,7 @@ namespace SSupport\Module\Core\Entity;
 use lhs\Yii2SaveRelationsBehavior\SaveRelationsBehavior;
 use paulzi\jsonBehavior\JsonBehavior;
 use paulzi\jsonBehavior\JsonValidator;
+use SSupport\Component\Core\Entity\CustomerInterface;
 use SSupport\Component\Core\Entity\MessageInterface;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\Entity\UserInterface;
@@ -142,13 +143,13 @@ class Ticket extends ActiveRecord implements TicketInterface
         throw new NotImplementedException();
     }
 
-    public function getCustomer(): UserInterface
+    public function getCustomer(): CustomerInterface
     {
         return $this->__get('relatedCustomer');
     }
 
-    /** @param UserInterface|ActiveRecordInterface $customer */
-    public function setCustomer(UserInterface $customer): CustomerAwareInterface
+    /** @param CustomerInterface|ActiveRecordInterface $customer */
+    public function setCustomer(CustomerInterface $customer): CustomerAwareInterface
     {
         if ($this->isNewRecord) {
             $this->__set('customer_id', $customer->getId());

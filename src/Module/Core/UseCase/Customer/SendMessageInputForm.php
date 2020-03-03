@@ -2,7 +2,7 @@
 
 namespace SSupport\Module\Core\UseCase\Customer;
 
-use SSupport\Component\Core\Entity\UserInterface;
+use SSupport\Component\Core\Entity\CustomerInterface;
 use SSupport\Component\Core\Gateway\Uploader\AttachmentUploadsAwareInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
 use SSupport\Module\Core\UseCase\Form\AbstractSendMessageInputForm as BaseSendMessageForm;
@@ -31,12 +31,12 @@ class SendMessageInputForm extends BaseSendMessageForm implements SendMessageInp
         $this->attachmentUploadSettings = $attachmentUploadSettings;
     }
 
-    public function getCustomer(): UserInterface
+    public function getCustomer(): CustomerInterface
     {
         return $this->customer;
     }
 
-    public function setCustomer(UserInterface $customer)
+    public function setCustomer(CustomerInterface $customer)
     {
         $this->customer = $customer;
 
