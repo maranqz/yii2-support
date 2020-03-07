@@ -9,6 +9,5 @@ use yii\widgets\ActiveForm;
  * @var CreateTicketForm $model
  * @var ActiveForm $form
  */
-
 ?>
 <?php echo $form->field($model, 'nick_name')->textInput(['maxlength' => true]); ?>

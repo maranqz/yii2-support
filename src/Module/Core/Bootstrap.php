@@ -139,7 +139,7 @@ class Bootstrap implements BootstrapInterface
 
     protected function initFactory()
     {
-        $this->setSingleton(FactoryInterface::class.'.Ticket', Factory::class, [
+        $this->setSingleton(FactoryInterface::class . '.Ticket', Factory::class, [
             $this->getDIClass(TicketInterface::class),
         ]);
 
@@ -204,7 +204,7 @@ class Bootstrap implements BootstrapInterface
     protected function isSetEmailFrom($class)
     {
         if (empty($this->getModule()->emailFrom) && $this->hasDICass($class)) {
-            throw new InvalidConfigException('Set emailFrom or class "'.$class.'".');
+            throw new InvalidConfigException('Set emailFrom or class "' . $class . '".');
         }
     }
 
@@ -230,7 +230,7 @@ class Bootstrap implements BootstrapInterface
     {
         $this->setSingleton(RedirectAfterCreateTicketInterface::class, RedirectAfterCreateTicket::class);
         $this->setSingleton(CreateTicketInterface::class, CreateTicket::class, [
-            3 => $this->make(FactoryInterface::class.'.Ticket'),
+            3 => $this->make(FactoryInterface::class . '.Ticket'),
         ]);
 
         $this->setSingleton(CustomerSendMessageInterface::class, CustomerSendMessage::class);
@@ -265,7 +265,7 @@ class Bootstrap implements BootstrapInterface
         if (!isset($app->get('i18n')->translations['ssupport_core*'])) {
             $app->get('i18n')->translations['ssupport_core*'] = [
                 'class' => PhpMessageSource::class,
-                'basePath' => __DIR__.'/Resource/i18n',
+                'basePath' => __DIR__ . '/Resource/i18n',
                 'sourceLanguage' => 'en-US',
             ];
         }

@@ -18,7 +18,9 @@ trait BootstrapTrait
 
             foreach ($listeners as $listener) {
                 if (isset($listener[0]) && \is_string($listener[0])) {
-                    $listener[0] = $this->make($listener[0]);
+                    $listener[0] = function (...$args) use ($listener) {
+                        return $this->make($listener[0]);
+                    };
                 }
 
                 $dispatcher->addListener($event, $listener);

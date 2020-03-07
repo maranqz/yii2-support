@@ -9,11 +9,11 @@ use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
 
-class RequestRefereeWidget extends Widget
+class RequestRefereeButtonWidget extends Widget
 {
     use ContainerAwareTrait;
 
-    const DEFAULT_PATH = '/'.Module::DEFAULT_NAME.'/'.IndexController::PATH.'/request';
+    const DEFAULT_PATH = '/' . Module::DEFAULT_NAME . '/' . IndexController::PATH . '/request';
 
     public $text;
     public $url;

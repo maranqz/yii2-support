@@ -16,7 +16,7 @@ trait RefereeTicketTrait
 
     /**
      * @param RefereeInterface|ActiveRecordInterface $user
-     * @param UserInterface                          $requester
+     * @param UserInterface $requester
      *
      * @return $this
      */

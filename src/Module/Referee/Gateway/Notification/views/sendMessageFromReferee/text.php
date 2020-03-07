@@ -13,5 +13,5 @@ use yii\web\View;
 echo $this->render('@SSupport/Module/Core/Gateway/Notification/views/commonText', [
     'ticket' => $ticket,
     'message' => $message,
-    'link' => Url::to([IndexController::PATH.'/view', 'ticketId' => $ticket->getId()], true),
+    'link' => Url::to([IndexController::PATH . '/view', 'ticketId' => $ticket->getId()], true),
 ]);

@@ -69,14 +69,22 @@ class Module extends BaseModule
     ];
     /** @TODO refactoring */
     public $attachmentWebPath = self::LOCAL_ATTACHMENTS_DIRECTORY;
-    public $attachmentPath = '@webroot'.self::LOCAL_ATTACHMENTS_DIRECTORY;
+    public $attachmentPath = '@webroot' . self::LOCAL_ATTACHMENTS_DIRECTORY;
 
     /** @var callable */
-    public $viewDetailConfig = [self::class, 'getViewDetailConfigDefault'];
+    public $customerViewDetailConfig = [self::class, 'getViewDetailConfigDefault'];
 
-    public function getViewDetailConfig(TicketInterface $ticket): iterable
+    public function getCustomerViewDetailConfig(TicketInterface $ticket): iterable
     {
-        return ($this->viewDetailConfig)($ticket);
+        return ($this->customerViewDetailConfig)($ticket);
+    }
+
+    /** @var callable */
+    public $agentViewDetailConfig = [self::class, 'getViewDetailConfigDefault'];
+
+    public function getAgentViewDetailConfig(TicketInterface $ticket): iterable
+    {
+        return ($this->agentViewDetailConfig)($ticket);
     }
 
     public static function getViewDetailConfigDefault(TicketInterface $ticket): iterable
@@ -104,7 +112,7 @@ class Module extends BaseModule
     public static function urlCreatorDefault($action, $model, $key, $index, $actionColumn)
     {
         $params = \is_array($key) ? $key : ['ticketId' => (string) $key];
-        $params[0] = $actionColumn->controller ? $actionColumn->controller.'/'.$action : $action;
+        $params[0] = $actionColumn->controller ? $actionColumn->controller . '/' . $action : $action;
 
         return Url::toRoute($params);
     }
@@ -131,8 +139,6 @@ class Module extends BaseModule
 
     public static function getCustomerGridViewConfigDefault(CustomerGridViewSettingsInterface $config)
     {
-        $a = 1;
-
         return [
             'dataProvider' => $config->dataProvider(),
             'filterModel' => $config->searchModel(),

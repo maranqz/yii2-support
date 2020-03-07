@@ -88,7 +88,7 @@ class IndexController extends Controller
         }
 
         return $this->redirect([
-            $this->getSupportCoreModule()->getRoute(TicketController::PATH.'/view'),
+            $this->getSupportCoreModule()->getRoute(TicketController::PATH . '/view'),
             Module::TICKET_ID => $ticketId,
         ]);
     }
@@ -118,7 +118,7 @@ class IndexController extends Controller
         }
 
         return $this->redirect([
-            $this->getSupportCoreModule()->getRoute(TicketController::PATH.'/view'),
+            $this->getSupportCoreModule()->getRoute(TicketController::PATH . '/view'),
             Module::TICKET_ID => $ticketId,
         ]);
     }

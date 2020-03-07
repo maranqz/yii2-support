@@ -26,6 +26,7 @@ class SendMessage implements SendMessageInterface
 
     public function __invoke(SendMessageInputInterface $inputDTO): MessageInterface
     {
+        $ticket = $inputDTO->getTicket();
         $this->eventDispatcher->dispatch(new BeforeSendMessage($inputDTO));
 
         $message = $this->messageFactory->create(new CreateMessageInput(
@@ -33,8 +34,7 @@ class SendMessage implements SendMessageInterface
             $inputDTO->getReferee(),
             $inputDTO->getAttachments()
         ));
-
-        $recipients = $this->userRepository->getRecipientsForTicketFromReferee($inputDTO->getTicket());
+        $ticket->addMessage($message);
 
         $this->eventDispatcher->dispatch(new AfterSendMessage($inputDTO, $message));
 

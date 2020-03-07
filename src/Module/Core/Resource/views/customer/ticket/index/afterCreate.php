@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php echo Yii::t('ssupport_core', 'to_view_ticket', [
         'link' => Html::a(
             Yii::t('ssupport_core', 'authorize'),
-            [IndexController::PATH.'/view', Module::TICKET_ID => $ticketId]
+            [IndexController::PATH . '/view', Module::TICKET_ID => $ticketId]
         ),
     ]); ?>
 </div>

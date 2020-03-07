@@ -10,7 +10,7 @@ trait RepositoryTrait
     protected function trySave(ActiveRecordInterface $model)
     {
         if (false === $model->save()) {
-            throw new ValidationException($model->getErrors());
+            throw new ValidationException(print_r($model->getErrors(), 1));
         }
 
         return $this;

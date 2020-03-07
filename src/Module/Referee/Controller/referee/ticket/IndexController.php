@@ -67,7 +67,7 @@ class IndexController extends Controller
         return $this->render('index', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-            'gridViewConfig' => ($this->getSupportRefereeModule()->refereeGridViewConfig)($gridViewSettings),
+            'gridViewConfig' => $this->getSupportRefereeModule()->getRefereeGridViewConfig($gridViewSettings),
         ]);
     }
 
@@ -89,12 +89,13 @@ class IndexController extends Controller
         return $this->render('view', [
             'ticket' => $ticket,
             'messagesProvider' => $messagesProvider,
-            'detailView' => $this->getSupportCoreModule()->getViewDetailConfig($ticket),
+            'detailView' => $this->getSupportRefereeModule()->getRefereeViewDetailConfig($ticket),
         ]);
     }
 
     protected function findModel($id)
     {
+        /** @var TicketInterface $model */
         if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
             return $model;
         }

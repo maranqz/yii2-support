@@ -63,7 +63,7 @@ class MessageController extends Controller
             });
 
             return $this->redirect([
-                IndexController::PATH.'/view',
+                IndexController::PATH . '/view',
                 Module::TICKET_ID => $ticket->getId(),
             ]);
         }
@@ -71,6 +71,7 @@ class MessageController extends Controller
         return $this->renderContent(MessageFormWidget::widget([
             'model' => $model,
             'ticket' => $ticket,
+            'action' => self::PATH . '/send',
         ]));
     }
 

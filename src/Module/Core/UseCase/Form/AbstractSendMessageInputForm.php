@@ -22,8 +22,7 @@ abstract class AbstractSendMessageInputForm extends Model implements FileAcceptA
     public function rules()
     {
         return array_merge(
-            $this->getModelRulesByFields(MessageInterface::class, ['ticket_id']),
-            $this->getModelRulesByFields(MessageInterface::class, ['text']),
+            $this->getModelRulesByFields(MessageInterface::class, ['ticket_id', 'text']),
             [
                 [['files'], 'file', 'maxFiles' => '5', 'mimeTypes' => $this->filesMimeTypes],
             ]
@@ -48,5 +47,18 @@ abstract class AbstractSendMessageInputForm extends Model implements FileAcceptA
     public function getText(): string
     {
         return $this->text;
+    }
+
+    public function getTicketQuery()
+    {
+        $message = $this->make(MessageInterface::class);
+        $message->ticket_id = $this->getTicket_id();
+
+        return $message->getTicketQuery();
+    }
+
+    public static function getDb()
+    {
+        return static::getDIClass(MessageInterface::class)::getDB();
     }
 }

@@ -26,14 +26,14 @@ trait NotifierTrait
 
     protected function getPath($name)
     {
-        return $this->rootPath.$name.'/';
+        return $this->rootPath . $name . '/';
     }
 
     protected function getView($path)
     {
         return [
-            'html' => $path.'/html',
-            'text' => $path.'/text',
+            'html' => $path . '/html',
+            'text' => $path . '/text',
         ];
     }
 }

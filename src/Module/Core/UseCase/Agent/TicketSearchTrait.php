@@ -1,18 +1,33 @@
 <?php
 
-namespace SSupport\Module\Core\UseCase\Customer;
+namespace SSupport\Module\Core\UseCase\Agent;
 
+use kartik\daterange\DateRangeBehavior;
 use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
 
-class TicketSearch extends Model
+trait TicketSearchTrait
 {
     use ContainerAwareTrait;
 
-    public $id;
+    public $updatedAtRange;
+    public $updatedTimeStart;
+    public $updatedTimeEnd;
+
+    public function behaviors()
+    {
+        return [
+            [
+                'class' => DateRangeBehavior::class,
+                'attribute' => 'updatedAtRange',
+                'dateStartAttribute' => 'updatedTimeStart',
+                'dateEndAttribute' => 'updatedTimeStart',
+            ],
+        ];
+    }
 
     /**
      * {@inheritdoc}
@@ -21,6 +36,8 @@ class TicketSearch extends Model
     {
         return [
             [['id'], 'integer'],
+            [['updatedAtRange'], 'match', 'pattern' => '/^.+\s\-\s.+$/'],
+            [['subject'], 'safe'],
         ];
     }
 
@@ -36,15 +53,15 @@ class TicketSearch extends Model
     /**
      * Creates data provider instance with search query applied.
      *
-     * @param int $customerId
+     * @param int $assignId
      * @param array $params
      *
      * @return ActiveDataProvider
      */
-    public function search($customerId, $params)
+    public function search($assignId, $params)
     {
         /** @var ActiveQuery $query */
-        $query = $this->make(TicketInterface::class)::find()->andWhere(['customer_id' => $customerId]);
+        $query = $this->make(TicketInterface::class)::find()->andWhere(['assign_id' => $assignId]);
 
         // add conditions that should always apply here
 
@@ -64,7 +81,11 @@ class TicketSearch extends Model
         // grid filtering conditions
         $query->andFilterWhere([
             'id' => $this->id,
+            'customer_id' => $this->customer_id,
         ]);
+
+        $query->andFilterWhere(['like', 'subject', $this->subject])
+            ->andFilterWhere(['between', 'updated_at', $this->updatedTimeStart, $this->updatedTimeEnd]);
 
         return $dataProvider;
     }

@@ -25,13 +25,13 @@ yii\web\YiiAsset::register($this);
     <h1><?php echo Html::encode($this->title); ?></h1>
     <?php $this->endBlock(); ?>
 
-    <div class="col-sm-8">
+    <div class="col-md-8">
         <?php echo MessageFormWidget::widget([
             'ticket' => $ticket,
             'pjaxOptions' => [
                 'enablePushState' => false,
             ],
-            'action' => MessageController::PATH.'/send',
+            'action' => MessageController::PATH . '/send',
         ]); ?>
 
         <?php echo MessagesWidget::widget([
@@ -39,7 +39,7 @@ yii\web\YiiAsset::register($this);
         ]); ?>
     </div>
 
-    <div class="col-sm-4">
+    <div class="col-md-4">
         <?php echo DetailView::widget($detailView); ?>
     </div>
 </div>

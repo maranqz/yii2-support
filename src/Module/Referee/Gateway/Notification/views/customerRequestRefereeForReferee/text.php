@@ -14,5 +14,5 @@ echo Yii::t(
     [
         'nickname' => $ticket->getCustomer()->getNickname(),
         'subject' => $ticket->getSubject(),
-        'link' => Url::to([IndexController::PATH.'/view', 'ticketId' => $ticket->getId()], true),
+        'link' => Url::to([IndexController::PATH . '/view', 'ticketId' => $ticket->getId()], true),
     ]);

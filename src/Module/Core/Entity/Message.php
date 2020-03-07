@@ -52,15 +52,13 @@ class Message extends ActiveRecord implements MessageInterface
                 ['sender_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => $this->getDIClass(UserInterface::class),
-                'targetAttribute' => ['sender_id' => 'id'],
+                'targetRelation' => 'senderQuery',
             ],
             [
                 ['ticket_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => $this->getDIClass(TicketInterface::class),
-                'targetAttribute' => ['ticket_id' => 'id'],
+                'targetRelation' => 'ticketQuery',
             ],
         ];
     }
@@ -131,7 +129,7 @@ class Message extends ActiveRecord implements MessageInterface
         return $this->__get('senderQuery');
     }
 
-    protected function getSenderQuery()
+    public function getSenderQuery()
     {
         return $this->hasOne($this->getDIClass(UserInterface::class), ['id' => 'sender_id']);
     }
@@ -141,7 +139,7 @@ class Message extends ActiveRecord implements MessageInterface
         return $this->__get('ticketQuery');
     }
 
-    protected function getTicketQuery()
+    public function getTicketQuery()
     {
         return $this->hasOne($this->getDIClass(TicketInterface::class), ['id' => 'ticket_id']);
     }

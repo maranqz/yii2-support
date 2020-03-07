@@ -14,7 +14,6 @@ use yii\widgets\Pjax;
  * @var array $formOptions
  * @var array $pjaxOptions
  */
-
 ?>
 <div class="message-form <?php echo $containerClass; ?>">
 

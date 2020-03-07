@@ -18,7 +18,7 @@ echo $this->render('../commonHtml', [
         Yii::t('ssupport_core', 'message_link'),
         null,
         [
-            'href' => Url::to([IndexController::PATH.'/view', 'ticketId' => $ticket->getId()], true),
+            'href' => Url::to([IndexController::PATH . '/view', 'ticketId' => $ticket->getId()], true),
         ]
     ),
 ]);

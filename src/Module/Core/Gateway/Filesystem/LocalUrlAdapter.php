@@ -23,6 +23,6 @@ class LocalUrlAdapter implements UrlAdapterInterface
         /** @var SplFileInfo $file */
         $file = $this->adapter->getMetadata($key);
 
-        return $this->root.$file['path'];
+        return $this->root . $file['path'];
     }
 }

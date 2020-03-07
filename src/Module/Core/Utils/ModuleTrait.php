@@ -6,7 +6,7 @@ trait ModuleTrait
 {
     public function getRoute($route)
     {
-        return '/'.$this::$name.'/'.$route;
+        return '/' . $this::$name . '/' . $route;
     }
 
     public static function appendArrayInPlace($array, $appendix)

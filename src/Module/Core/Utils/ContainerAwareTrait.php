@@ -7,79 +7,75 @@ use yii\base\InvalidConfigException;
 
 trait ContainerAwareTrait
 {
-    public function getDi()
+    public static function getDi()
     {
         return Yii::$container;
     }
 
-    public function make($class, $params = [], $config = [])
+    public static function make($class, $params = [], $config = [])
     {
-        return $this->getDi()->get($class, $params, $config);
+        return static::getDi()->get($class, $params, $config);
     }
 
-    public function getDIClass($class)
+    public static function getDIClass($class)
     {
-        $this->checkDIClass($class);
+        static::checkDIClass($class);
 
-        return $this->getDIClassOrNull($class);
+        return static::getDIClassOrNull($class);
     }
 
-    protected function getDIClassOrNull($class)
+    protected static function getDIClassOrNull($class)
     {
-        if ($this->hasDICass($class)) {
-            $definitions = $this->getDIDefinitionOrNull($class);
+        if (static::hasDICass($class)) {
+            $definitions = static::getDIDefinitionOrNull($class);
 
-            return $this->getDIClassOrNull($definitions['class']);
+            return static::getDIClassOrNull($definitions['class']);
         }
 
         return $class;
     }
 
-    public function getDIDefinition($class)
+    public static function getDIDefinition($class)
     {
-        $this->checkDIClass($class);
+        static::checkDIClass($class);
 
-        return $this->getDIDefinitionOrNull($class);
+        return static::getDIDefinitionOrNull($class);
     }
 
-    public function getDIDefinitionOrNull($class)
+    public static function getDIDefinitionOrNull($class)
     {
-        return $this->getDi()->getDefinitions()[$class];
+        return static::getDi()->getDefinitions()[$class];
     }
 
-    public function checkDIClass($class)
+    public static function checkDIClass($class)
     {
-        if (!$this->hasDICass($class)) {
-            throw new InvalidConfigException('Failed to instantiate component or class "'.$class.'".');
+        if (!(static::hasDICass($class) || class_exists($class))) {
+            throw new InvalidConfigException('Failed to instantiate component or class "' . $class . '".');
         }
     }
 
-    protected function hasDICass($class)
+    protected static function hasDICass($class)
     {
-        return $this->getDi()->has($class);
+        return static::getDi()->has($class);
     }
 
-    protected function set($class, $definition = [], array $params = [], $replace = false)
+    protected static function set($class, $definition = [], array $params = [], $replace = false)
     {
-        $di = $this->getDi();
+        $di = static::getDi();
         if (!$replace && $di->has($class)) {
-            return $this;
+            return;
         }
 
         $di->set($class, $definition, $params);
-
-        return $this;
     }
 
-    protected function setSingleton($class, $definition = [], array $params = [], $replace = false)
+    protected static function setSingleton($class, $definition = [], array $params = [], $replace = false)
     {
-        $di = $this->getDi();
+        $di = static::getDi();
         if (!$replace && $di->has($class)) {
-            return $this;
+            return;
         }
 
         $di->setSingleton($class, $definition, $params);
-
-        return $this;
     }
 }

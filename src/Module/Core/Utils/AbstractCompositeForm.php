@@ -72,8 +72,8 @@ abstract class AbstractCompositeForm extends Model
                         if ($item->hasErrors()) {
                             return true;
                         }
-                    } elseif (0 === mb_strpos($attribute, $name.'.'.$i.'.')) {
-                        if ($item->hasErrors(mb_substr($attribute, mb_strlen($name.'.'.$i.'.')))) {
+                    } elseif (0 === mb_strpos($attribute, $name . '.' . $i . '.')) {
+                        if ($item->hasErrors(mb_substr($attribute, mb_strlen($name . '.' . $i . '.')))) {
                             return true;
                         }
                     }
@@ -83,8 +83,8 @@ abstract class AbstractCompositeForm extends Model
                     if ($form->hasErrors()) {
                         return true;
                     }
-                } elseif (0 === mb_strpos($attribute, $name.'.')) {
-                    if ($form->hasErrors(mb_substr($attribute, mb_strlen($name.'.')))) {
+                } elseif (0 === mb_strpos($attribute, $name . '.')) {
+                    if ($form->hasErrors(mb_substr($attribute, mb_strlen($name . '.')))) {
                         return true;
                     }
                 }
@@ -103,7 +103,7 @@ abstract class AbstractCompositeForm extends Model
                 foreach ($form as $i => $item) {
                     foreach ($item->getErrors() as $attr => $errors) {
                         /** @var array $errors */
-                        $errorAttr = $name.'.'.$i.'.'.$attr;
+                        $errorAttr = $name . '.' . $i . '.' . $attr;
                         if (null === $attribute) {
                             foreach ($errors as $error) {
                                 $result[$errorAttr][] = $error;
@@ -118,7 +118,7 @@ abstract class AbstractCompositeForm extends Model
             } else {
                 foreach ($form->getErrors() as $attr => $errors) {
                     /** @var array $errors */
-                    $errorAttr = $name.'.'.$attr;
+                    $errorAttr = $name . '.' . $attr;
                     if (null === $attribute) {
                         foreach ($errors as $error) {
                             $result[$errorAttr][] = $error;
@@ -142,12 +142,12 @@ abstract class AbstractCompositeForm extends Model
             if (\is_array($form)) {
                 foreach ($form as $i => $item) {
                     foreach ($item->getFirstErrors() as $attr => $error) {
-                        $result[$name.'.'.$i.'.'.$attr] = $error;
+                        $result[$name . '.' . $i . '.' . $attr] = $error;
                     }
                 }
             } else {
                 foreach ($form->getFirstErrors() as $attr => $error) {
-                    $result[$name.'.'.$attr] = $error;
+                    $result[$name . '.' . $attr] = $error;
                 }
             }
         }

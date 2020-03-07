@@ -86,7 +86,7 @@ class IndexController extends Controller
         return $this->render('view', [
             'ticket' => $ticket,
             'messagesProvider' => $messagesProvider,
-            'detailView' => $this->getSupportCoreModule()->getViewDetailConfig($ticket),
+            'detailView' => $this->getSupportCoreModule()->getAgentViewDetailConfig($ticket),
         ]);
     }
 

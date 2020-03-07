@@ -41,7 +41,7 @@ class HeaderWidget extends Widget
             $this->message->getSender()->getId(),
             Module::REFEREE_ROLE
         )) {
-            return ' / '.Yii::t('ssupport_referee', 'Referee');
+            return ' / ' . Yii::t('ssupport_referee', 'Referee');
         }
 
         return '';

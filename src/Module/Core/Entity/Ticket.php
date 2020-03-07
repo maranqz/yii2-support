@@ -60,15 +60,13 @@ class Ticket extends ActiveRecord implements TicketInterface
                 ['assign_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => $this->getDIClass(UserInterface::class),
-                'targetAttribute' => ['assign_id' => 'id'],
+                'targetRelation' => 'relatedAssign',
             ],
             [
                 ['customer_id'],
                 'exist',
                 'skipOnError' => true,
-                'targetClass' => $this->getDIClass(UserInterface::class),
-                'targetAttribute' => ['customer_id' => 'id'],
+                'targetRelation' => 'relatedCustomer',
             ],
             [['readers'], JsonValidator::class],
         ];
@@ -112,6 +110,7 @@ class Ticket extends ActiveRecord implements TicketInterface
     public function addMessage(MessageInterface $message): TicketInterface
     {
         $this->__set('updated_at', null);
+        /* @TODO trick for create ticket before create image */
         $message->link('ticketQuery', $this);
 
         return $this;
@@ -125,7 +124,7 @@ class Ticket extends ActiveRecord implements TicketInterface
         return [$this->__get('relatedAssign')];
     }
 
-    protected function getRelatedAssign()
+    public function getRelatedAssign()
     {
         return $this->hasOne($this->getDIClass(UserInterface::class), ['id' => 'assign_id']);
     }
@@ -151,18 +150,14 @@ class Ticket extends ActiveRecord implements TicketInterface
     /** @param CustomerInterface|ActiveRecordInterface $customer */
     public function setCustomer(CustomerInterface $customer): CustomerAwareInterface
     {
-        if ($this->isNewRecord) {
-            $this->__set('customer_id', $customer->getId());
-        } else {
-            $this->link('relatedCustomer', $customer);
-        }
+        $this->__set('relatedCustomer', $customer);
 
         return $this;
     }
 
-    protected function getRelatedCustomer()
+    public function getRelatedCustomer()
     {
-        return $this->hasOne($this->getDIClass(UserInterface::class), ['id' => 'customer_id'])->onCondition([]);
+        return $this->hasOne($this->getDIClass(CustomerInterface::class), ['id' => 'customer_id']);
     }
 
     public function addReader(UserInterface $reader)

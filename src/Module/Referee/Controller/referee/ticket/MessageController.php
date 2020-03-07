@@ -56,7 +56,7 @@ class MessageController extends Controller
             });
 
             return $this->redirect([
-                IndexController::PATH.'/view',
+                IndexController::PATH . '/view',
                 CoreModule::TICKET_ID => $ticket->getId(),
             ]);
         }

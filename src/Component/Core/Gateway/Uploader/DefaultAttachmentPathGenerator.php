@@ -8,16 +8,16 @@ final class DefaultAttachmentPathGenerator implements AttachmentPathGeneratorInt
     {
         $ext = pathinfo($path, PATHINFO_EXTENSION);
         if ($ext) {
-            $ext = '.'.$ext;
+            $ext = '.' . $ext;
         }
 
         $hash = bin2hex(random_bytes(8));
 
-        return $this->addDataToPath($hash.$ext);
+        return $this->addDataToPath($hash . $ext);
     }
 
     private function addDataToPath(string $path): string
     {
-        return date('y/m/d').$path;
+        return date('y/m/d') . $path;
     }
 }

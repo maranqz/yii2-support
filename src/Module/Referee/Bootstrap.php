@@ -126,12 +126,12 @@ class Bootstrap implements BootstrapInterface
         ]);
 
         Yii::setAlias(
-            RefereeNotifierListener::DEFAULT_PATH.'sendMessageFromAgent',
-            CoreRefereeNotifierListener::DEFAULT_PATH.'sendMessageFromAgent'
+            RefereeNotifierListener::DEFAULT_PATH . 'sendMessageFromAgent',
+            CoreRefereeNotifierListener::DEFAULT_PATH . 'sendMessageFromAgent'
         );
         Yii::setAlias(
-            RefereeNotifierListener::DEFAULT_PATH.'sendMessageFromCustomer',
-            CoreRefereeNotifierListener::DEFAULT_PATH.'sendMessageFromCustomer'
+            RefereeNotifierListener::DEFAULT_PATH . 'sendMessageFromCustomer',
+            CoreRefereeNotifierListener::DEFAULT_PATH . 'sendMessageFromCustomer'
         );
     }
 
@@ -173,7 +173,7 @@ class Bootstrap implements BootstrapInterface
         if (!isset($app->get('i18n')->translations['ssupport_referee*'])) {
             $app->get('i18n')->translations['ssupport_referee*'] = [
                 'class' => PhpMessageSource::class,
-                'basePath' => __DIR__.'/Resource/i18n',
+                'basePath' => __DIR__ . '/Resource/i18n',
                 'sourceLanguage' => 'en-US',
             ];
         }
@@ -221,7 +221,7 @@ class Bootstrap implements BootstrapInterface
     protected function checkCoreModule(Application $app)
     {
         if (!$app->hasModule(CoreModule::$name)) {
-            throw new InvalidConfigException('You should use '.CoreModule::$name);
+            throw new InvalidConfigException('You should use ' . CoreModule::$name);
         }
 
         $this->coreModule = $app->getModule(CoreModule::$name);

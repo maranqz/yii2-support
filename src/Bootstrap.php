@@ -32,10 +32,10 @@ class Bootstrap implements BootstrapInterface
 
             $component = Yii::createObject($boostrap);
             if ($component instanceof BootstrapInterface) {
-                Yii::debug('Bootstrap with '.\get_class($component).'::bootstrap()', __METHOD__);
+                Yii::debug('Bootstrap with ' . \get_class($component) . '::bootstrap()', __METHOD__);
                 $component->bootstrap($app);
             } else {
-                Yii::debug('Bootstrap with '.\get_class($component), __METHOD__);
+                Yii::debug('Bootstrap with ' . \get_class($component), __METHOD__);
             }
         }
     }

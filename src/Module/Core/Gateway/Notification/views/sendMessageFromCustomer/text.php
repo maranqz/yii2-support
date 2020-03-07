@@ -13,5 +13,5 @@ use yii\web\View;
 echo $this->render('../commonText', [
     'ticket' => $ticket,
     'message' => $message,
-    'link' => Url::to([IndexController::PATH.'/view', 'ticketId' => $ticket->getId()], true),
+    'link' => Url::to([IndexController::PATH . '/view', 'ticketId' => $ticket->getId()], true),
 ]);
