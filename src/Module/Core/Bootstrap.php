@@ -109,7 +109,7 @@ class Bootstrap implements BootstrapInterface
         $this->initFactory();
         $this->initGateway();
         $this->initUseCase();
-        $this->initListeners();
+        $this->initListeners($this->getModule()->defaultListeners);
         $this->initTranslations($app);
 
         if ($app instanceof WebApplication) {

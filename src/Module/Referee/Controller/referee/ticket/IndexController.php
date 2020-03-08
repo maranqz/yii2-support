@@ -2,12 +2,13 @@
 
 namespace SSupport\Module\Referee\Controller\referee\ticket;
 
-use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
+use SSupport\Module\Core\Gateway\Repository\GetTicketByIdTrait;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use SSupport\Module\Core\Utils\CoreModuleAwareTrait;
 use SSupport\Module\Referee\Module;
+use SSupport\Module\Referee\RBAC\IsOwnerRefereeRule;
 use SSupport\Module\Referee\Resource\config\GridView\RefereeGridViewSettingsInterface;
 use SSupport\Module\Referee\UseCase\Referee\TicketSearch;
 use SSupport\Module\Referee\Utils\RefereeModuleAwareTrait;
@@ -15,13 +16,13 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 
 class IndexController extends Controller
 {
     use BlockTrait;
     use ContainerAwareTrait;
     use CoreModuleAwareTrait;
+    use GetTicketByIdTrait;
     use RefereeModuleAwareTrait;
 
     const PATH = 'referee/ticket/index';
@@ -42,11 +43,18 @@ class IndexController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        /*
-                         * @TODO setting block only set ticket
-                         */
                         'allow' => true,
+                        'actions' => ['index'],
                         'roles' => [Module::REFEREE_ROLE],
+                    ],
+                    [
+                        'allow' => true,
+                        'permissions' => [IsOwnerRefereeRule::NAME],
+                        'roleParams' => function () {
+                            return [
+                                'ticket' => $this->getTicketByIdOrNull(Yii::$app->request->get('ticketId')),
+                            ];
+                        },
                     ],
                 ],
             ],
@@ -73,7 +81,7 @@ class IndexController extends Controller
 
     public function actionView($ticketId)
     {
-        $ticket = $this->findModel($ticketId);
+        $ticket = $this->getTicketById($ticketId);
 
         $this->highlighter->removeHighlight($ticket, Yii::$app->user->getIdentity());
 
@@ -91,15 +99,5 @@ class IndexController extends Controller
             'messagesProvider' => $messagesProvider,
             'detailView' => $this->getSupportRefereeModule()->getRefereeViewDetailConfig($ticket),
         ]);
-    }
-
-    protected function findModel($id)
-    {
-        /** @var TicketInterface $model */
-        if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException();
     }
 }

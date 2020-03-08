@@ -6,17 +6,19 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 trait BootstrapTrait
 {
-    protected function initListeners()
+    protected function initListeners($defaultListeners = [])
     {
         /** @var EventDispatcherInterface $dispatcher */
         $dispatcher = $this->make(EventDispatcherInterface::class);
 
-        foreach ($this->getModule()->listeners as $event => $listeners) {
-            if (isset($listeners[0]) && !\is_callable($listeners[0])) {
-                $listeners = [$listeners];
+        $listeners = array_merge($defaultListeners, $this->getModule()->listeners);
+
+        foreach ($listeners as $event => $actionListeners) {
+            if (isset($actionListeners[0]) && !\is_callable($actionListeners[0])) {
+                $actionListeners = [$actionListeners];
             }
 
-            foreach ($listeners as $listener) {
+            foreach ($actionListeners as $listener) {
                 if (isset($listener[0]) && \is_string($listener[0])) {
                     $listener[0] = function (...$args) use ($listener) {
                         return $this->make($listener[0]);

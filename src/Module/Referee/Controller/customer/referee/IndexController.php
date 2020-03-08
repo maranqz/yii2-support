@@ -56,7 +56,7 @@ class IndexController extends Controller
                         'permissions' => [IsOwnerCustomerRule::NAME],
                         'roleParams' => function () {
                             return [
-                                'ticket' => $this->getTicketById(Yii::$app->request->get('ticketId')),
+                                'ticket' => $this->getTicketByIdOrNull(Yii::$app->request->get('ticketId')),
                             ];
                         },
                     ],
@@ -67,7 +67,7 @@ class IndexController extends Controller
 
     public function actionRequest($ticketId)
     {
-        $ticket = $this->getTicketById($ticketId);
+        $ticket = $this->getTicketByIdOrNull($ticketId);
 
         if ($this->timeoutRequestRefereeStatus->canSetTimeoutRequestReferee($ticket)) {
             return $this->actionTimeoutRequest($ticketId);
@@ -95,7 +95,7 @@ class IndexController extends Controller
 
     public function actionTimeoutRequest($ticketId)
     {
-        $ticket = $this->getTicketById($ticketId);
+        $ticket = $this->getTicketByIdOrNull($ticketId);
         if ($this->timeoutRequestRefereeStatus->canRequestReferee($ticket)) {
             return $this->actionRequest($ticketId);
         }

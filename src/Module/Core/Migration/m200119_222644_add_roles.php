@@ -3,6 +3,7 @@
 namespace SSupport\Module\Core\Migration;
 
 use SSupport\Module\Core\Module;
+use SSupport\Module\Core\RBAC\IsOwnerAgentRule;
 use SSupport\Module\Core\RBAC\IsOwnerCustomerRule;
 use Yii;
 use yii\db\Migration;
@@ -17,16 +18,24 @@ class m200119_222644_add_roles extends Migration
         $agent = $auth->createRole(Module::AGENT_ROLE);
         $auth->add($agent);
 
+        $isOwnerAgentRule = new IsOwnerAgentRule();
+        $auth->add($isOwnerAgentRule);
+
+        $isOwnerAgentPermission = $auth->createPermission(IsOwnerAgentRule::NAME);
+        $isOwnerAgentPermission->ruleName = $isOwnerAgentRule->name;
+        $auth->add($isOwnerAgentPermission);
+        $auth->addChild($agent, $isOwnerAgentPermission);
+
         $customer = $auth->createRole(Module::CUSTOMER_ROLE);
         $auth->add($customer);
 
-        $isNotOwnerCustomerRule = new IsOwnerCustomerRule();
-        $auth->add($isNotOwnerCustomerRule);
+        $isOwnerCustomerRule = new IsOwnerCustomerRule();
+        $auth->add($isOwnerCustomerRule);
 
-        $isNotOwnerCustomerPermission = $auth->createPermission(IsOwnerCustomerRule::NAME);
-        $isNotOwnerCustomerPermission->ruleName = $isNotOwnerCustomerRule->name;
-        $auth->add($isNotOwnerCustomerPermission);
-        $auth->addChild($customer, $isNotOwnerCustomerPermission);
+        $isOwnerCustomerPermission = $auth->createPermission(IsOwnerCustomerRule::NAME);
+        $isOwnerCustomerPermission->ruleName = $isOwnerCustomerRule->name;
+        $auth->add($isOwnerCustomerPermission);
+        $auth->addChild($customer, $isOwnerCustomerPermission);
     }
 
     public function safeDown()
@@ -36,14 +45,20 @@ class m200119_222644_add_roles extends Migration
         $agent = $auth->getRole(Module::AGENT_ROLE);
         $auth->remove($agent);
 
+        $isOwnerAgentRule = $auth->getRule(IsOwnerAgentRule::NAME);
+        $auth->remove($isOwnerAgentRule);
+
+        $isOwnerAgentPermission = $auth->getPermission(IsOwnerAgentRule::NAME);
+        $auth->remove($isOwnerAgentPermission);
+
         $customer = $auth->getRole(Module::CUSTOMER_ROLE);
         $auth->remove($customer);
 
-        $isNotOwnerCustomerRule = $auth->getRule(IsOwnerCustomerRule::NAME);
-        $auth->remove($isNotOwnerCustomerRule);
+        $isOwnerCustomerRule = $auth->getRule(IsOwnerCustomerRule::NAME);
+        $auth->remove($isOwnerCustomerRule);
 
-        $isNotOwnerCustomerPermission = $auth->getPermission(IsOwnerCustomerRule::NAME);
-        $auth->remove($isNotOwnerCustomerPermission);
+        $isOwnerCustomerPermission = $auth->getPermission(IsOwnerCustomerRule::NAME);
+        $auth->remove($isOwnerCustomerPermission);
     }
 
     /**

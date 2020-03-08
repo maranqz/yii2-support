@@ -31,6 +31,6 @@ class IsOwnerCustomerRule extends Rule
 
     protected function isTicketBelongCustomer($customerId, TicketInterface $ticket = null)
     {
-        return $ticket->getCustomer()->getId() === $customerId;
+        return !empty($ticket->getCustomer()) && $customerId === $ticket->getCustomer()->getId();
     }
 }

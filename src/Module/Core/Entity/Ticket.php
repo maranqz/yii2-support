@@ -55,7 +55,7 @@ class Ticket extends ActiveRecord implements TicketInterface
         return [
             [['subject', 'assign_id'], 'required'],
             [['customer_id', 'assign_id', 'created_at'], 'integer'],
-            [['subject'], 'string', 'max' => 1024],
+            [['subject'], 'string', 'min' => 5, 'max' => 1024],
             [
                 ['assign_id'],
                 'exist',

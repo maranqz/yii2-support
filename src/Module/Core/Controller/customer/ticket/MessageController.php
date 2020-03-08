@@ -2,7 +2,6 @@
 
 namespace SSupport\Module\Core\Controller\customer\ticket;
 
-use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
 use SSupport\Module\Core\Controller\BlockTrait;
@@ -16,7 +15,6 @@ use SSupport\Module\Core\Utils\CoreModuleAwareTrait;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 
 class MessageController extends Controller
 {
@@ -39,7 +37,7 @@ class MessageController extends Controller
                         'verbs' => ['POST'],
                         'roleParams' => function () {
                             return [
-                                'ticket' => $this->getTicketById(Yii::$app->request->get('ticketId')),
+                                'ticket' => $this->getTicketByIdOrNull(Yii::$app->request->get('ticketId')),
                             ];
                         },
                     ],
@@ -53,7 +51,7 @@ class MessageController extends Controller
         /** @var SendMessageInputForm $model */
         $model = $this->make(SendMessageInputInterface::class);
 
-        $ticket = $this->findModel($ticketId);
+        $ticket = $this->getTicketById($ticketId);
         $model->setTicket($ticket);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             Yii::$app->db->transaction(function () use ($model) {
@@ -73,14 +71,5 @@ class MessageController extends Controller
             'ticket' => $ticket,
             'action' => self::PATH . '/send',
         ]));
-    }
-
-    protected function findModel($id)
-    {
-        if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException();
     }
 }

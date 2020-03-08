@@ -51,7 +51,9 @@ class Module extends BaseModule
         AgentAfterSendMessage::class,
     ];
 
-    public $listeners = [
+    public $listeners = [];
+
+    public $defaultListeners = [
         AfterCreateTicket::class => [NotifierListenerInterface::class, 'newTicket'],
         AgentAfterSendMessage::class => [NotifierListenerInterface::class, 'sendMessageFromAgent'],
         CustomerAfterSendMessage::class => [NotifierListenerInterface::class, 'sendMessageFromCustomer'],

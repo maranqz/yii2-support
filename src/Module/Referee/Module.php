@@ -46,7 +46,9 @@ class Module extends BaseModule
         RefereeAfterSendMessage::class,
     ];
 
-    public $listeners = [
+    public $listeners = [];
+
+    public $defaultListeners = [
         RefereeAfterSendMessage::class => [NotifierListenerInterface::class, 'sendMessageFromReferee'],
         AgentAfterSendMessage::class => [NotifierListenerInterface::class, 'sendMessageFromAgent'],
         CustomerAfterSendMessage::class => [NotifierListenerInterface::class, 'sendMessageFromCustomer'],
@@ -87,7 +89,7 @@ class Module extends BaseModule
     public static function getRefereeViewDetailConfigDefault(RefereeTicketInterface $ticket)
     {
         $core = CoreModule::getViewDetailConfigDefault($ticket);
-        $refereeAttributes = self::getRefereeViewDetailConfigAttributes($ticket);
+        $refereeAttributes = static::getRefereeViewDetailConfigAttributes($ticket);
 
         $core['attributes'] = CoreModule::appendArrayInPlace(
             $core['attributes'] + $refereeAttributes,
@@ -110,10 +112,10 @@ class Module extends BaseModule
         return [
             'referee' => [
                 'label' => $label,
-                'attribute' => function ($model) {
+                'value' => function ($model) {
                     return RequestRefereeViewWidget::widget([
                         'ticket' => $model,
-                    ]);
+                    ]) ?: null;
                 },
             ],
             'referee_customer' => [
@@ -121,7 +123,7 @@ class Module extends BaseModule
                 'value' => function ($model) {
                     return RequestRefereeCustomerWidget::widget([
                         'ticket' => $model,
-                    ]);
+                    ]) ?: null;
                 },
                 'format' => 'html',
             ],

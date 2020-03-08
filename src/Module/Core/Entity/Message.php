@@ -47,7 +47,7 @@ class Message extends ActiveRecord implements MessageInterface
         return [
             [['ticket_id', 'sender_id', 'text', 'created_at'], 'required'],
             [['ticket_id', 'sender_id'], 'integer'],
-            [['text'], 'string'],
+            [['text'], 'string', 'min' => 10, 'max' => 2048],
             [
                 ['sender_id'],
                 'exist',

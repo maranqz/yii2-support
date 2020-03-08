@@ -6,7 +6,6 @@ use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInputInterface;
 use SSupport\Component\Core\UseCase\Customer\CreateTicket\CreateTicketInterface;
 use SSupport\Module\Core\Controller\BlockTrait;
-use SSupport\Module\Core\Entity\Ticket;
 use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
 use SSupport\Module\Core\Gateway\Repository\GetTicketByIdTrait;
 use SSupport\Module\Core\Module;
@@ -20,7 +19,6 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 
 class IndexController extends Controller
 {
@@ -68,7 +66,7 @@ class IndexController extends Controller
                         'permissions' => [IsOwnerCustomerRule::NAME],
                         'roleParams' => function () {
                             return [
-                                'ticket' => $this->getTicketById(Yii::$app->request->get('ticketId')),
+                                'ticket' => $this->getTicketByIdOrNull(Yii::$app->request->get('ticketId')),
                             ];
                         },
                     ],
@@ -97,7 +95,7 @@ class IndexController extends Controller
 
     public function actionView($ticketId)
     {
-        $ticket = $this->findModel($ticketId);
+        $ticket = $this->getTicketById($ticketId);
 
         $this->highlighter->removeHighlight($ticket, Yii::$app->user->getIdentity());
 
@@ -141,15 +139,5 @@ class IndexController extends Controller
         return $this->render('afterCreate', [
             'ticketId' => $ticketId,
         ]);
-    }
-
-    protected function findModel($id)
-    {
-        /** @var TicketInterface|Ticket $model */
-        if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException();
     }
 }

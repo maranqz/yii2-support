@@ -2,10 +2,11 @@
 
 namespace SSupport\Module\Core\Controller\agent\ticket;
 
-use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Module\Core\Controller\BlockTrait;
 use SSupport\Module\Core\Gateway\Highlighting\HighlighterInterface;
+use SSupport\Module\Core\Gateway\Repository\GetTicketByIdTrait;
 use SSupport\Module\Core\Module;
+use SSupport\Module\Core\RBAC\IsOwnerAgentRule;
 use SSupport\Module\Core\Resource\config\GridView\AgentGridViewSettingsInterface;
 use SSupport\Module\Core\UseCase\Agent\TicketSearch;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
@@ -14,13 +15,13 @@ use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 
 class IndexController extends Controller
 {
     use BlockTrait;
     use ContainerAwareTrait;
     use CoreModuleAwareTrait;
+    use GetTicketByIdTrait;
 
     const PATH = 'agent/ticket/index';
 
@@ -40,11 +41,18 @@ class IndexController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        /*
-                         * @TODO setting block only set ticket
-                         */
                         'allow' => true,
+                        'actions' => ['index'],
                         'roles' => [Module::AGENT_ROLE],
+                    ],
+                    [
+                        'allow' => true,
+                        'permissions' => [IsOwnerAgentRule::NAME],
+                        'roleParams' => function () {
+                            return [
+                                'ticket' => $this->getTicketByIdOrNull(Yii::$app->request->get('ticketId')),
+                            ];
+                        },
                     ],
                 ],
             ],
@@ -70,7 +78,7 @@ class IndexController extends Controller
 
     public function actionView($ticketId)
     {
-        $ticket = $this->findModel($ticketId);
+        $ticket = $this->getTicketById($ticketId);
 
         $this->highlighter->removeHighlight($ticket, Yii::$app->user->getIdentity());
 
@@ -88,14 +96,5 @@ class IndexController extends Controller
             'messagesProvider' => $messagesProvider,
             'detailView' => $this->getSupportCoreModule()->getAgentViewDetailConfig($ticket),
         ]);
-    }
-
-    protected function findModel($id)
-    {
-        if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException();
     }
 }

@@ -2,23 +2,24 @@
 
 namespace SSupport\Module\Core\Controller\agent\ticket;
 
-use SSupport\Component\Core\Entity\TicketInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInputInterface;
 use SSupport\Component\Core\UseCase\Customer\SendMessage\SendMessageInterface;
 use SSupport\Module\Core\Controller\BlockTrait;
+use SSupport\Module\Core\Gateway\Repository\GetTicketByIdTrait;
 use SSupport\Module\Core\Module;
+use SSupport\Module\Core\RBAC\IsOwnerAgentRule;
 use SSupport\Module\Core\Resource\Widget\MessageForm\MessageFormWidget;
 use SSupport\Module\Core\UseCase\Customer\SendMessageInputForm;
 use SSupport\Module\Core\Utils\ContainerAwareTrait;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
-use yii\web\NotFoundHttpException;
 
 class MessageController extends Controller
 {
     use BlockTrait;
     use ContainerAwareTrait;
+    use GetTicketByIdTrait;
 
     const PATH = 'agent/ticket/message';
 
@@ -29,11 +30,14 @@ class MessageController extends Controller
                 'class' => AccessControl::class,
                 'rules' => [
                     [
-                        /*
-                         * @TODO setting block only set ticket
-                         */
                         'allow' => true,
-                        'roles' => [Module::AGENT_ROLE],
+                        'permissions' => [IsOwnerAgentRule::NAME],
+                        'verbs' => ['POST'],
+                        'roleParams' => function () {
+                            return [
+                                'ticket' => $this->getTicketByIdOrNull(Yii::$app->request->get('ticketId')),
+                            ];
+                        },
                     ],
                 ],
             ],
@@ -45,7 +49,7 @@ class MessageController extends Controller
         /** @var SendMessageInputForm $model */
         $model = $this->make(SendMessageInputInterface::class);
 
-        $ticket = $this->findModel($ticketId);
+        $ticket = $this->getTicketById($ticketId);
         $model->setTicket($ticket);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             Yii::$app->db->transaction(function () use ($model) {
@@ -65,14 +69,5 @@ class MessageController extends Controller
             'ticket' => $ticket,
             'action' => self::PATH . '/send',
         ]));
-    }
-
-    protected function findModel($id)
-    {
-        if (null !== ($model = $this->make(TicketInterface::class)::findOne($id))) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException();
     }
 }

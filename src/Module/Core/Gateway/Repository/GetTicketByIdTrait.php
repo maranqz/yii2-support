@@ -8,7 +8,7 @@ trait GetTicketByIdTrait
 {
     protected $tickets = [];
 
-    protected function getTicketById($ticketId)
+    protected function getTicketByIdOrNull($ticketId)
     {
         if (empty($ticketId)) {
             return null;
@@ -19,5 +19,15 @@ trait GetTicketByIdTrait
         }
 
         return $this->tickets[$ticketId];
+    }
+
+    protected function getTicketById($id)
+    {
+        /** @var TicketInterface $model */
+        if (null !== ($model = $this->getTicketByIdOrNull($id))) {
+            return $model;
+        }
+
+        throw new NotFoundHttpException();
     }
 }
