@@ -23,8 +23,11 @@ class Uploader implements UploaderInterface
     public function upload(AttachmentUploadInterface $attachmentUpload)
     {
         $this->filesystem->writeStream(
-            $attachmentUpload->getName(),
-            $attachmentUpload->getStream()
+            $attachmentUpload->getPath(),
+            $attachmentUpload->getStream(),
+            [
+                'ContentDisposition' => 'attachment; filename=' . $attachmentUpload->getName(),
+            ]
         );
     }
 

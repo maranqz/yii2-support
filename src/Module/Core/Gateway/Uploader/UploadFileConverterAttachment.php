@@ -70,6 +70,7 @@ class UploadFileConverterAttachment implements UploadFileConverterAttachmentInte
                 [
                     fopen($file->tempName, 'r'),
                     $path,
+                    $file->name,
                 ]
             );
         }
