@@ -203,7 +203,7 @@ class Bootstrap implements BootstrapInterface
 
     protected function isSetEmailFrom($class)
     {
-        if (empty($this->getModule()->emailFrom) && $this->hasDICass($class)) {
+        if (empty($this->getModule()->emailFrom) && !$this->hasDICass($class)) {
             throw new InvalidConfigException('Set emailFrom or class "' . $class . '".');
         }
     }
